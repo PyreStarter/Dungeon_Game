@@ -3,7 +3,7 @@ import random
 import menu
 
 pygame.font.init()
-font = pygame.font.Font('C:\\Users\\Alex\\Desktop\\GameAssets\\coders_crux.ttf', 64)
+font = pygame.font.Font('Fonts\\coders_crux.ttf', 64)
 ScreenSizeX = 640
 ScreenSizeY = 480
 
@@ -55,7 +55,7 @@ class Weapon(Item):
 class Torch(Item):
 
     def __init__(self):
-        Item.__init__(self, pygame.image.load("C:\\Users\\Alex\\Desktop\\GameAssets\\torch.png"), 1, 5, 'torch')
+        Item.__init__(self, pygame.image.load("Image_Assets\\torch.png"), 1, 5, 'torch')
         self.Hud_Display = True
 
     def use(self, hud, quantity=1):
@@ -75,7 +75,7 @@ class Player:
         self.health = 3
         self.width = 32
         self.height = 32
-        self.image = pygame.image.load("C:\\Users\\Alex\\Desktop\\GameAssets\\player.png")
+        self.image = pygame.image.load("Image_Assets\\player.png")
         self.surface = pygame.Surface((self.width, self.height))
         self.frame = 0
         self.speed_counter = 0
@@ -94,7 +94,7 @@ class Player:
 class Background:
 
     def __init__(self):
-        self.image = pygame.image.load("C:\\Users\\Alex\\Desktop\\GameAssets\\dungeon_background.png")
+        self.image = pygame.image.load("Image_Assets\\dungeon_background.png")
         self.surface = pygame.Surface((640, 480))
         self.speed_counter = 0
 
@@ -130,8 +130,8 @@ class Inventory:
 
     def __init__(self):
         self.items = []
-        self.main_hand = Item(pygame.image.load("C:\\Users\\Alex\\Desktop\\GameAssets\\meter_1.png"), 0, 0, 0)
-        self.off_hand = Item(pygame.image.load("C:\\Users\\Alex\\Desktop\\GameAssets\\meter_1.png"), 0, 0, 0)
+        self.main_hand = Item(pygame.image.load("Image_Assets\\meter_1.png"), 0, 0, 0)
+        self.off_hand = Item(pygame.image.load("Image_Assets\\meter_1.png"), 0, 0, 0)
 
     def add_item(self, item, quantity=1):
         for i in self.items:
@@ -170,7 +170,7 @@ class Hud:
         self.surface.set_colorkey((255, 0, 255))
         self.database = database
         self.set_item_tracker()
-        self.torch_meter_image = pygame.image.load("C:\\Users\\Alex\\Desktop\\GameAssets\\meter_1.png")
+        self.torch_meter_image = pygame.image.load("Image_Assets\\meter_1.png")
         self.torch_diminish = 0
         self.torch_count = 0
 
@@ -222,7 +222,7 @@ def main():
     pygame.init()
     pygame.mixer.init()
 
-    logo = pygame.image.load("C:\\Users\\Alex\\Desktop\\GameAssets\\logo32x32.png")
+    logo = pygame.image.load("Image_Assets\\logo32x32.png")
     pygame.display.set_icon(logo)
     pygame.display.set_caption("game")
 
