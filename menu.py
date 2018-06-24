@@ -7,7 +7,7 @@ class Menu:
         self.lista = []
         self.pola = []
         self.size_font = 32
-        self.font_path = 'C:\\Users\\Alex\\Desktop\\GameAssets\\coders_crux.ttf'
+        self.font_path = 'Fonts/coders_crux.ttf'
         self.font = pygame.font.Font
         self.dest_surface = pygame.Surface
         self.quantity_pol = 0
