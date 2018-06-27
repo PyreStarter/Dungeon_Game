@@ -11,8 +11,20 @@ ScreenSizeY = 480
 #Every encounter (i.e. combat scenario, puzzle, riddle, trap, etc.) will be of this class.
 class Encounter:
 
-    def __init__(self):
+    def __init__(self, image):
         self.menu = menu.Menu()
+        self.image = image
+
+
+class Top_Birb(Encounter):
+
+    def __init__(self, image, sword_attack_option, menu_buffer):
+        Encounter.__init__(self, image)
+        self.menu.init([str(sword_attack_option.name) + ' - ' + str(sword_attack_option.text), 'Cry', 'Run Away'],
+                           menu_buffer)
+        self.running = False
+        self.menu.move_menu(0, (ScreenSizeY - self.menu.menu_height))
+        self.menu.menu_width = ScreenSizeX
 
 
 #This class is for defining the unique options that will be provided by certain scenarios, items, and skills.
@@ -252,6 +264,8 @@ def main():
 
     player_inventory.add_item(torch)
 
+
+
 #This is creating a weapon, changing its attributes, giving it a combat option, and equiping it to the character.
 
     steel_short_sword = Weapon(logo, 10, 2, "Steel Short Sword")
@@ -261,6 +275,8 @@ def main():
     steel_short_sword.add_option(sword_attack_option)
 
     player_inventory.set_main_hand(steel_short_sword)
+
+    top_birb = Top_Birb(pygame.image.load("Image_Assets\\Tokoyami.png"), sword_attack_option, menu_buffer)
 
 #creating the menus
 
@@ -368,6 +384,10 @@ def main():
                     if event.key == pygame.K_ESCAPE:
                         dungeonmenu = True
                         dungeon_menu.draw()
+                    if event.key == pygame.K_p:
+                        top_birb.running = True
+                        dungeon = False
+                        top_birb.menu.draw()
             if not dungeonmenu:
                 player_hud.update_torch_meter(25)
                 dungeon_background.move(1)
@@ -376,7 +396,25 @@ def main():
             player_hud.update(player_inventory)
             screen_buffer_1.blit(dungeon_background.surface, (0, 0))
 
-        if dungeonmenu or tavern or opening:
+        if top_birb.running:
+            screen_buffer_2.blit(top_birb.image, (0, 0))
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    top_birb.running = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:
+                        top_birb.menu.draw(-1)
+                    if event.key == pygame.K_DOWN:
+                        top_birb.menu.draw(1)
+                    if event.key == pygame.K_RETURN:
+                        if top_birb.menu.get_position() == 2:
+                            top_birb.running = False
+                            dungeon = True
+                            menu_buffer.fill((255, 0, 255))
+                            screen_buffer_2.fill((255, 0, 255))
+
+
+        if dungeonmenu or tavern or opening or top_birb.running:
             menu_boolean = True
         else:
             menu_boolean = False
