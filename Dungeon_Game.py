@@ -14,15 +14,48 @@ class Encounter:
     def __init__(self, image):
         self.menu = menu.Menu()
         self.image = image
+        self.options = []
+
+    def add_option(self, option):
+        self.options.append(option)
 
 
-class Top_Birb(Encounter):
+class Combat_Encounter(Encounter):
 
-    def __init__(self, image, sword_attack_option, menu_buffer):
+    def __init__(self, image, menu_buffer):
         Encounter.__init__(self, image)
-        self.menu.init([str(sword_attack_option.name) + ' - ' + str(sword_attack_option.text), 'Cry', 'Run Away'],
-                           menu_buffer)
+        self.buffer = menu_buffer
         self.running = False
+
+    def initialize_menu(self):
+        if len(self.options) >= 4:
+            self.menu.init([str(self.options[0].name) + ' - ' + str(self.options[0].text),
+                            str(self.options[1].name) + ' - ' + str(self.options[1].text),
+                            str(self.options[2].name) + ' - ' + str(self.options[2].text),
+                            str(self.options[3].name) + ' - ' + str(self.options[3].text),
+                            'Cry',
+                            'Run Away'],
+                           self.buffer)
+        elif len(self.options) == 3:
+            self.menu.init([str(self.options[0].name) + ' - ' + str(self.options[0].text),
+                            str(self.options[1].name) + ' - ' + str(self.options[1].text),
+                            str(self.options[2].name) + ' - ' + str(self.options[2].text),
+                            'Cry',
+                            'Run Away'],
+                           self.buffer)
+        elif len(self.options) == 2:
+            self.menu.init([str(self.options[0].name) + ' - ' + str(self.options[0].text),
+                            str(self.options[1].name) + ' - ' + str(self.options[1].text),
+                            'Cry',
+                            'Run Away'],
+                           self.buffer)
+        elif len(self.options) == 1:
+            self.menu.init([str(self.options[0].name) + ' - ' + str(self.options[0].text),
+                            'Cry',
+                            'Run Away'],
+                           self.buffer)
+        else:
+            return 0
         self.menu.move_menu(0, (ScreenSizeY - self.menu.menu_height))
         self.menu.menu_width = ScreenSizeX
 
@@ -276,7 +309,11 @@ def main():
 
     player_inventory.set_main_hand(steel_short_sword)
 
-    top_birb = Top_Birb(pygame.image.load("Image_Assets\\Tokoyami.png"), sword_attack_option, menu_buffer)
+#This is creating the Top Birb encounter
+
+    top_birb = Combat_Encounter(pygame.image.load("Image_Assets\\Tokoyami.png"), menu_buffer)
+    top_birb.add_option(sword_attack_option)
+    top_birb.initialize_menu()
 
 #creating the menus
 
@@ -365,6 +402,7 @@ def main():
                         player_inventory.use_item(player_hud, torch)
                     if event.key == pygame.K_ESCAPE:
                         dungeonmenu = False
+                        menu_buffer.fill((255, 0, 255))
                     if event.key == pygame.K_UP:
                         dungeon_menu.draw(-1)
                     if event.key == pygame.K_DOWN:
@@ -412,7 +450,6 @@ def main():
                             dungeon = True
                             menu_buffer.fill((255, 0, 255))
                             screen_buffer_2.fill((255, 0, 255))
-
 
         if dungeonmenu or tavern or opening or top_birb.running:
             menu_boolean = True
