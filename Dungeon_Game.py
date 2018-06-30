@@ -175,8 +175,8 @@ class Inventory:
 
     def __init__(self):
         self.items = []
-        self.main_hand = Item(pygame.image.load("Image_Assets\\meter_1.png"), 0, 0, 0)
-        self.off_hand = Item(pygame.image.load("Image_Assets\\meter_1.png"), 0, 0, 0)
+        self.main_hand = Weapon(pygame.image.load("Image_Assets\\meter_1.png"), 0, 0, 0)
+        self.off_hand = Weapon(pygame.image.load("Image_Assets\\meter_1.png"), 0, 0, 0)
 
     def add_item(self, item, quantity=1):
         for i in self.items:
@@ -304,15 +304,28 @@ def main():
     steel_short_sword = Weapon(logo, 10, 2, "Steel Short Sword")
     steel_short_sword.damage = 3
     steel_short_sword.accuracy = 90
-    sword_attack_option = Option("Sword Attack", str(str(steel_short_sword.accuracy) +"% chance to deal " + str(steel_short_sword.damage) + " to the enemy"))
+    sword_attack_option = Option("Sword Attack", str(str(steel_short_sword.accuracy) +"% chance to deal " + str(steel_short_sword.damage + player.strength) + " to the enemy"))
     steel_short_sword.add_option(sword_attack_option)
 
     player_inventory.set_main_hand(steel_short_sword)
 
+#This is creating a shield for the player to use
+
+    round_wooden_shield = Weapon(logo, 4, 1, "Round Wooden Shield")
+    round_wooden_shield.damage = 0
+    round_wooden_shield.accuracy = 30
+    shield_bash_option = Option("Shield Bash", str(str(round_wooden_shield.accuracy) +"% chance to deal " + str(round_wooden_shield.damage + player.strength) + " to the enemy"))
+    round_wooden_shield.add_option(shield_bash_option)
+
+    player_inventory.set_off_hand(round_wooden_shield)
+
 #This is creating the Top Birb encounter
 
     top_birb = Combat_Encounter(pygame.image.load("Image_Assets\\Tokoyami.png"), menu_buffer)
-    top_birb.add_option(sword_attack_option)
+    if len(player_inventory.main_hand.options):
+        top_birb.add_option(player_inventory.main_hand.options[0])
+    if len(player_inventory.off_hand.options):
+        top_birb.add_option(player_inventory.off_hand.options[0])
     top_birb.initialize_menu()
 
 #creating the menus
@@ -445,7 +458,7 @@ def main():
                     if event.key == pygame.K_DOWN:
                         top_birb.menu.draw(1)
                     if event.key == pygame.K_RETURN:
-                        if top_birb.menu.get_position() == 2:
+                        if top_birb.menu.get_position() == len(top_birb.options) + 1:
                             top_birb.running = False
                             dungeon = True
                             menu_buffer.fill((255, 0, 255))
