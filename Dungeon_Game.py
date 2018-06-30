@@ -8,7 +8,7 @@ ScreenSizeX = 640
 ScreenSizeY = 480
 
 
-#Every encounter (i.e. combat scenario, puzzle, riddle, trap, etc.) will be of this class.
+# Every encounter (i.e. combat scenario, puzzle, riddle, trap, etc.) will be of this class.
 class Encounter:
 
     def __init__(self, image):
@@ -70,7 +70,7 @@ class Combat_Encounter(Encounter):
         self.menu.menu_width = ScreenSizeX
 
 
-#This class is for defining the unique options that will be provided by certain scenarios, items, and skills.
+# This class is for defining the unique options that will be provided by certain scenarios, items, and skills.
 class Option:
 
     def __init__(self, name, text, damage=0, chance=0):
@@ -81,7 +81,7 @@ class Option:
         self.chance = chance
 
 
-#This is the item class. Each item should have it's own class that will inherit this base class.
+# This is the item class. Each item should have it's own class that will inherit this base class.
 class Item:
 
     def __init__(self, image, rarity, value, name):
@@ -95,7 +95,7 @@ class Item:
         print('Item is not being used properly')
 
 
-#This is the weapon class. It is a subclass of Item. All weapons will be of this class.
+# This is the weapon class. It is a subclass of Item. All weapons will be of this class.
 class Weapon(Item):
 
     def __init__(self, image, rarity, value, name):
@@ -108,7 +108,7 @@ class Weapon(Item):
         self.options.append(option)
 
 
-#Torch class
+# Torch class
 class Torch(Item):
 
     def __init__(self):
@@ -121,7 +121,7 @@ class Torch(Item):
         return
 
 
-#Player class
+# Player class
 class Player:
 
     def __init__(self):
@@ -147,7 +147,7 @@ class Player:
             self.frame = 0
 
 
-#Background class. This will be used for the scrolling backdrops in the dungeon.
+# Background class. This will be used for the scrolling backdrops in the dungeon.
 class Background:
 
     def __init__(self):
@@ -165,7 +165,7 @@ class Background:
             self.speed_counter = 0
 
 
-#This class is a database for organizing items. This will be removed upon implementation of a better solution
+# This class is a database for organizing items. This will be removed upon implementation of a better solution
 class Database:
 
     def __init__(self):
@@ -182,7 +182,7 @@ class Database:
         return 0
 
 
-#Inventory class. For keeping track of who has what.
+# Inventory class. For keeping track of who has what.
 class Inventory:
 
     def __init__(self):
@@ -215,7 +215,7 @@ class Inventory:
         self.off_hand = item
 
 
-#Hud class, handles everything related to the HUD
+# Hud class, handles everything related to the HUD
 class Hud:
 
     def __init__(self, inventory, database, width, height):
@@ -273,6 +273,8 @@ class Hud:
         self.set_torch_meter()
 
 
+# This is a function that will take in a probability of success and return successful(True) or unsuccessful(False)
+#  - The equation will probably be altered for game feel in the future
 def chance_outcome(chance):
     number = random.randint(1, 100)
     if number <= chance:
@@ -281,7 +283,7 @@ def chance_outcome(chance):
         return False
 
 
-#MAIN FUNCTION LES GOOOOOOO
+# MAIN FUNCTION LES GOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 def main():
 
     pygame.init()
@@ -290,9 +292,6 @@ def main():
     logo = pygame.image.load("Image_Assets\\logo32x32.png")
     pygame.display.set_icon(logo)
     pygame.display.set_caption("game")
-
-    ScreenX = int(ScreenSizeX / 32)
-    ScreenY = int(ScreenSizeY / 32)
 
     screen = pygame.display.set_mode((ScreenSizeX, ScreenSizeY))
     screen_buffer_1 = pygame.Surface((ScreenSizeX, ScreenSizeY))
@@ -319,7 +318,7 @@ def main():
 
 
 
-#This is creating a weapon, changing its attributes, giving it a combat option, and equiping it to the character.
+# This is creating a weapon, changing its attributes, giving it a combat option, and equiping it to the character.
 
     steel_short_sword = Weapon(logo, 10, 2, "Steel Short Sword")
     steel_short_sword.damage = 3
@@ -333,7 +332,7 @@ def main():
 
     player_inventory.set_main_hand(steel_short_sword)
 
-#This is creating a shield for the player to use
+# This is creating a shield for the player to use
 
     round_wooden_shield = Weapon(logo, 4, 1, "Round Wooden Shield")
     round_wooden_shield.damage = 0
@@ -347,7 +346,7 @@ def main():
 
     player_inventory.set_off_hand(round_wooden_shield)
 
-#This is creating the Top Birb encounter
+# This is creating the Top Birb encounter
 
     top_birb = Combat_Encounter(pygame.image.load("Image_Assets\\Tokoyami.png"), menu_buffer, 10)
     if len(player_inventory.main_hand.options):
@@ -356,13 +355,12 @@ def main():
         top_birb.add_option(player_inventory.off_hand.options[0])
     top_birb.initialize_menu()
 
-#creating the menus
+# creating the menus
 
     opening_menu = menu.Menu()
     opening_menu.init(['New Game', 'Options', 'Quit'], menu_buffer)
     opening = True
-    #opening_menu.move_menu(0, (ScreenSizeY - opening_menu.menu_height))
-    #opening_menu.menu_width = ScreenSizeX
+
     opening_menu.draw()
 
     tavern_menu = menu.Menu()
@@ -377,7 +375,7 @@ def main():
     dungeon = False
 
 
-    #\\\\\\\\This is the beginning of the while loop that is the entire game. This is where the magic happens./////////
+# \\\\\\\\This is the beginning of the while loop that is the entire game. This is where the magic happens./////////
 
     while running:
 
