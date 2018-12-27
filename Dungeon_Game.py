@@ -7,18 +7,78 @@ import menu
 pygame.font.init()
 font = pygame.font.Font('Fonts\\coders_crux.ttf', 64)
 
-#This class is for defining the unique options that will be provided by certain scenarios, items, and skills.
-class Option:
+# Every encounter (i.e. combat scenario, puzzle, riddle, trap, etc.) will be of this class.
+class Encounter:
+    def __init__(self, image):
+        self.menu = menu.Menu()
+        self.image = image
+        self.options = []
 
-    def __init__(self, name, text):
+    def add_option(self, option):
+        self.options.append(option)
+
+
+class Combat_Encounter(Encounter):
+    def __init__(self, image, menu_buffer, health):
+        Encounter.__init__(self, image)
+        self.buffer = menu_buffer
+        self.running = False
+        self.health = health
+        self.health_image = pygame.Surface((32, 32))
+        self.health_image.fill((255, 0, 255))
+
+    def set_health(self, health):
+        self.health = health
+        self.buffer.blit(self.health_image, (18, 32))
+        self.health_image = font.render("HP: " + str(self.health), 1, (255, 255, 255), (255, 0, 255))
+        self.buffer.blit(self.health_image, (18, 32))
+        self.health_image.fill((255, 0, 255))
+
+    def initialize_menu(self):
+        if len(self.options) >= 4:
+            self.menu.init([str(self.options[0].name) + ' - ' + str(self.options[0].text),
+                            str(self.options[1].name) + ' - ' + str(self.options[1].text),
+                            str(self.options[2].name) + ' - ' + str(self.options[2].text),
+                            str(self.options[3].name) + ' - ' + str(self.options[3].text),
+                            'Run Away'],
+                           self.buffer
+                           )
+        elif len(self.options) == 3:
+            self.menu.init([str(self.options[0].name) + ' - ' + str(self.options[0].text),
+                            str(self.options[1].name) + ' - ' + str(self.options[1].text),
+                            str(self.options[2].name) + ' - ' + str(self.options[2].text),
+                            'Run Away'],
+                           self.buffer
+                           )
+        elif len(self.options) == 2:
+            self.menu.init([str(self.options[0].name) + ' - ' + str(self.options[0].text),
+                            str(self.options[1].name) + ' - ' + str(self.options[1].text),
+                            'Run Away'],
+                           self.buffer
+                           )
+        elif len(self.options) == 1:
+            self.menu.init([str(self.options[0].name) + ' - ' + str(self.options[0].text),
+                            'Run Away'],
+                           self.buffer
+                           )
+        else:
+            return 0
+        self.menu.x = 0
+        self.menu.y = Environment.ScreenHeight - self.menu.height
+        self.menu.menu_width = Environment.ScreenWidth
+
+
+# This class is for defining the unique options that will be provided by certain scenarios, items, and skills.
+class Option:
+    def __init__(self, name, text, damage=0, chance=0):
         self.name = name
         self.text = text
         self.chosen = False
+        self.damage = damage
+        self.chance = chance
 
-
-#This is the item class. Each item should have it's own class that will inherit this base class.
+# This is the item class. Each item should have it's own class that will inherit this base class.
 class Item:
-
     def __init__(self, image, rarity, value, name):
         self.image = image
         self.rarity = rarity
@@ -29,10 +89,8 @@ class Item:
     def use(self, quantity=1):
         print('Item is not being used properly')
 
-
-#This is the weapon class. It is a subclass of Item. All weapons will be of this class.
+# This is the weapon class. It is a subclass of Item. All weapons will be of this class.
 class Weapon(Item):
-
     def __init__(self, image, rarity, value, name):
         Item.__init__(self, image, rarity, value, name)
         self.options = []
@@ -42,10 +100,8 @@ class Weapon(Item):
     def add_option(self, option):
         self.options.append(option)
 
-
-#Torch class
+# Torch class
 class Torch(Item):
-
     def __init__(self):
         Item.__init__(self, pygame.image.load("Image_Assets\\torch.png"), 1, 5, 'torch')
         self.Hud_Display = True
@@ -56,12 +112,12 @@ class Torch(Item):
         return
 
 
-#Player class
+# Player class
 class Player:
 
     def __init__(self):
         self.strength = 1
-        self.speed = 1
+        self.dexterity = 1
         self.awareness = 1
         self.stealth = 1
         self.health = 3
@@ -82,7 +138,7 @@ class Player:
             self.frame = 0
 
 
-#Background class. This will be used for the scrolling backdrops in the dungeon.
+# Background class. This will be used for the scrolling backdrops in the dungeon.
 class Background:
 
     def __init__(self):
@@ -100,7 +156,7 @@ class Background:
             self.speed_counter = 0
 
 
-#This class is a database for organizing items. This will be removed upon implementation of a better solution
+# This class is a database for organizing items. This will be removed upon implementation of a better solution
 class Database:
 
     def __init__(self):
@@ -117,13 +173,13 @@ class Database:
         return 0
 
 
-#Inventory class. For keeping track of who has what.
+# Inventory class. For keeping track of who has what.
 class Inventory:
 
     def __init__(self):
         self.items = []
-        self.main_hand = Item(pygame.image.load("Image_Assets\\meter_1.png"), 0, 0, 0)
-        self.off_hand = Item(pygame.image.load("Image_Assets\\meter_1.png"), 0, 0, 0)
+        self.main_hand = Weapon(pygame.image.load("Image_Assets\\meter_1.png"), 0, 0, 0)
+        self.off_hand = Weapon(pygame.image.load("Image_Assets\\meter_1.png"), 0, 0, 0)
 
     def add_item(self, item, quantity=1):
         for i in self.items:
@@ -150,7 +206,7 @@ class Inventory:
         self.off_hand = item
 
 
-#Hud class, handles everything related to the HUD
+# Hud class, handles everything related to the HUD
 class Hud:
 
     def __init__(self, inventory, database, width, height):
@@ -208,7 +264,17 @@ class Hud:
         self.set_torch_meter()
 
 
-#MAIN FUNCTION LES GOOOOOOO
+# This is a function that will take in a probability of success and return successful(True) or unsuccessful(False)
+#  - The equation will probably be altered for game feel in the future
+def chance_outcome(chance):
+    number = random.randint(1, 100)
+    if number <= chance:
+        return True
+    if number > chance:
+        return False
+
+
+# MAIN FUNCTION LES GOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 def main():
 
     pygame.init()
@@ -217,9 +283,6 @@ def main():
     logo = pygame.image.load("Image_Assets\\logo32x32.png")
     pygame.display.set_icon(logo)
     pygame.display.set_caption("game")
-
-    ScreenX = int(Environment.ScreenWidth / 32)
-    ScreenY = int(Environment.ScreenHeight / 32)
 
     screen = pygame.display.set_mode((Environment.ScreenWidth, Environment.ScreenHeight))
     screen_buffer_1 = pygame.Surface((Environment.ScreenWidth, Environment.ScreenHeight))
@@ -246,38 +309,64 @@ def main():
 
 
 
-#This is creating a weapon, changing its attributes, giving it a combat option, and equiping it to the character.
+# This is creating a weapon, changing its attributes, giving it a combat option, and equiping it to the character.
 
     steel_short_sword = Weapon(logo, 10, 2, "Steel Short Sword")
     steel_short_sword.damage = 3
-    steel_short_sword.accuracy = 90
-    sword_attack_option = Option("Sword Attack", str(str(steel_short_sword.accuracy) +"% chance to deal " + str(steel_short_sword.damage) + " to the enemy"))
+    steel_short_sword.accuracy = 65
+    sword_attack_option = Option("Sword Attack",
+                                 str(str(steel_short_sword.accuracy + player.dexterity*5) +"% chance to deal " + str(steel_short_sword.damage + player.strength) + " damage (attack)"),
+                                 steel_short_sword.damage + player.strength,
+                                 steel_short_sword.accuracy + player.dexterity*5
+                                 )
     steel_short_sword.add_option(sword_attack_option)
 
     player_inventory.set_main_hand(steel_short_sword)
 
-    top_birb = Top_Birb()
-    top_birb.init(pygame.image.load("Image_Assets\\Tokoyami.png"), menu_buffer, sword_attack_option)
+# This is creating a shield for the player to use
 
-#creating the menus
+    round_wooden_shield = Weapon(logo, 4, 1, "Round Wooden Shield")
+    round_wooden_shield.damage = 0
+    round_wooden_shield.accuracy = 20
+    shield_bash_option = Option("Shield Bash",
+                                str(str(round_wooden_shield.accuracy + player.dexterity*5) +"% chance to deal " + str(round_wooden_shield.damage + player.strength) + " damage (guard)"),
+                                round_wooden_shield.damage + player.strength,
+                                round_wooden_shield.accuracy + player.dexterity*5
+                                )
+    round_wooden_shield.add_option(shield_bash_option)
 
-    opening_menu = menu.Menu(['New Game', 'Options', 'Quit'], menu_buffer)
+    player_inventory.set_off_hand(round_wooden_shield)
+
+# This is creating the Top Birb encounter
+
+    top_birb = Combat_Encounter(pygame.image.load("Image_Assets\\Tokoyami.png"), menu_buffer, 10)
+    if len(player_inventory.main_hand.options):
+        top_birb.add_option(player_inventory.main_hand.options[0])
+    if len(player_inventory.off_hand.options):
+        top_birb.add_option(player_inventory.off_hand.options[0])
+    top_birb.initialize_menu()
+
+# creating the menus
+
+    opening_menu = menu.Menu()
+    opening_menu.init(['New Game', 'Options', 'Quit'], menu_buffer)
     opening = True
-    #opening_menu.move_menu(0, (Environment.ScreenHeight - opening_menu.menu_height))
-    #opening_menu.menu_width = Environment.ScreenWidth
+
     opening_menu.draw()
 
-    tavern_menu = menu.Menu(['Enter Dungeon', 'Inventory', 'Quit'], menu_buffer)
+    tavern_menu = menu.Menu()
+    tavern_menu.init(['Enter Dungeon', 'Inventory', 'Quit'], menu_buffer)
     tavern = False
 
-    dungeon_menu = menu.Menu(['Inventory', 'Character', 'Stop', 'Turn Around', 'Save & Quit'], menu_buffer)
+    dungeon_menu = menu.Menu()
+    dungeon_menu.init(['Inventory', 'Character', 'Stop', 'Turn Around', 'Save & Quit'], menu_buffer)
     dungeonmenu = False
 
     running = True
     dungeon = False
 
 
-    #\\\\\\\\This is the beginning of the while loop that is the entire game. This is where the magic happens./////////
+# \\\\\\\\This is the beginning of the while loop that is the entire game. This is where the magic happens./////////
 
     while running:
 
@@ -343,6 +432,7 @@ def main():
                         player_inventory.use_item(player_hud, torch)
                     if event.key == pygame.K_ESCAPE:
                         dungeonmenu = False
+                        menu_buffer.fill((255, 0, 255))
                     if event.key == pygame.K_UP:
                         dungeon_menu.draw()
                     if event.key == pygame.K_DOWN:
@@ -376,6 +466,7 @@ def main():
 
         if top_birb.running:
             screen_buffer_2.blit(top_birb.image, (0, 0))
+            top_birb.set_health(top_birb.health)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     top_birb.running = False
@@ -385,11 +476,43 @@ def main():
                     if event.key == pygame.K_DOWN:
                         top_birb.menu.draw()
                     if event.key == pygame.K_RETURN:
-                        if top_birb.menu.get_index() == 2:
+                        if top_birb.menu.get_index() == len(top_birb.options):
                             top_birb.running = False
                             dungeon = True
                             menu_buffer.fill((255, 0, 255))
                             screen_buffer_2.fill((255, 0, 255))
+                        if top_birb.menu.get_index() == 0:
+                            if chance_outcome(top_birb.options[0].chance):
+                                top_birb.set_health(top_birb.health - top_birb.options[0].damage)
+                                if top_birb.health <= 0:
+                                    top_birb.running = False
+                                    dungeon = True
+                                    menu_buffer.fill((255, 0, 255))
+                                    screen_buffer_2.fill((255, 0, 255))
+                        if top_birb.menu.get_index() == 1:
+                            if chance_outcome(top_birb.options[1].chance):
+                                top_birb.set_health(top_birb.health - top_birb.options[1].damage)
+                                if top_birb.health <= 0:
+                                    top_birb.running = False
+                                    dungeon = True
+                                    menu_buffer.fill((255, 0, 255))
+                                    screen_buffer_2.fill((255, 0, 255))
+                        if top_birb.menu.get_index() == 2:
+                            if chance_outcome(top_birb.options[2].chance):
+                                top_birb.set_health(top_birb.health - top_birb.options[2].damage)
+                                if top_birb.health <= 0:
+                                    top_birb.running = False
+                                    dungeon = True
+                                    menu_buffer.fill((255, 0, 255))
+                                    screen_buffer_2.fill((255, 0, 255))
+                        if top_birb.menu.get_index() == 3:
+                            if chance_outcome(top_birb.options[3].chance):
+                                top_birb.set_health(top_birb.health - top_birb.options[3].damage)
+                                if top_birb.health <= 0:
+                                    top_birb.running = False
+                                    dungeon = True
+                                    menu_buffer.fill((255, 0, 255))
+                                    screen_buffer_2.fill((255, 0, 255))
 
         if dungeonmenu or tavern or opening or top_birb.running:
             menu_boolean = True

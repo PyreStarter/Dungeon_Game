@@ -13,12 +13,8 @@ class MenuOption:
         self.surface = pygame.Surface
 
 class Menu:
-    def __init__(self, options, surface):
+    def __init__(self):
         self.options = []
-        for item in options:
-            self.options.append(MenuOption(item))
-
-        self.surface = surface
         self.index = 0
         self.font = pygame.font.Font('Fonts/coders_crux.ttf', 32)
         self.width = 0
@@ -27,6 +23,11 @@ class Menu:
         self.y = 0
         self.menu_widget = pygame.Surface
         self.active = False
+
+    def init(self, options, surface):
+        self.surface = surface
+        for item in options:
+            self.options.append(MenuOption(item))
         self.fill_menu_widget()
 
     def fill_menu_widget(self):
