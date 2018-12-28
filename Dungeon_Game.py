@@ -380,8 +380,10 @@ def main():
                         running = False
                         opening = False
                     if event.key == pygame.K_UP:
+                        opening_menu.select_previous()
                         opening_menu.draw()
                     if event.key == pygame.K_DOWN:
+                        opening_menu.select_next()
                         opening_menu.draw()
                     if event.key == pygame.K_RETURN:
                         if opening_menu.get_index() == 2:
@@ -405,8 +407,10 @@ def main():
                         menu_buffer.fill((255, 0, 255))
                         opening_menu.draw()
                     if event.key == pygame.K_UP:
+                        tavern_menu.select_previous()
                         tavern_menu.draw()
                     if event.key == pygame.K_DOWN:
+                        tavern_menu.select_next()
                         tavern_menu.draw()
                     if event.key == pygame.K_RETURN:
                         if tavern_menu.get_index() == 2:
@@ -434,8 +438,10 @@ def main():
                         dungeonmenu = False
                         menu_buffer.fill((255, 0, 255))
                     if event.key == pygame.K_UP:
+                        dungeon_menu.select_previous()
                         dungeon_menu.draw()
                     if event.key == pygame.K_DOWN:
+                        dungeon_menu.select_next()
                         dungeon_menu.draw()
                     if event.key == pygame.K_RETURN:
                         if dungeon_menu.get_index() == 4:
@@ -472,8 +478,10 @@ def main():
                     top_birb.running = False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
+                        top_birb.menu.select_previous()
                         top_birb.menu.draw()
                     if event.key == pygame.K_DOWN:
+                        top_birb.menu.select_next()
                         top_birb.menu.draw()
                     if event.key == pygame.K_RETURN:
                         if top_birb.menu.get_index() == len(top_birb.options):

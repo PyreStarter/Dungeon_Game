@@ -31,8 +31,9 @@ class Menu:
         self.fill_menu_widget()
 
     def fill_menu_widget(self):
+        self.update_menu_options()
+
         for option in self.options:
-            option.surface = self.font.render(option.text, 1, pygame.Color(255, 255, 0))
             self.height = self.height + option.surface.get_height()
             self.width = max(self.width, option.surface.get_width())
 
@@ -46,8 +47,27 @@ class Menu:
         self.menu_widget = menu_widget
 
     def draw(self):
-
         self.surface.blit(self.menu_widget, pygame.Rect(self.x, self.y, self.width, self.height))
 
     def get_index(self):
         return self.index
+
+    def select_next(self):
+        self.index = self.index + 1 if self.index < len(self.options) - 1 else 0
+        self.update_menu_options()
+
+    def select_previous(self):
+        self.index = self.index - 1 if self.index > 0 else len(self.options) - 1
+        self.update_menu_options()
+
+    def update_menu_options(self):
+        menu_widget = pygame.Surface((self.width, self.height))
+        menu_item_height = self.height / len(self.options)
+        for i in range(len(self.options)):
+            if i == self.index:
+                self.options[i].surface = self.font.render(self.options[i].text, 1, pygame.Color(0, 255, 0))
+            else:
+                self.options[i].surface = self.font.render(self.options[i].text, 1, pygame.Color(255, 255, 0))
+            menu_widget.blit(self.options[i].surface, pygame.Rect(0, menu_item_height * i, self.width, menu_item_height))
+
+        self.menu_widget = menu_widget
