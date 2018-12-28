@@ -142,17 +142,18 @@ class Player:
 class Background:
 
     def __init__(self):
-        self.image = pygame.image.load("Image_Assets\\dungeon_background.png")
-        self.surface = pygame.Surface((640, 480))
+        self.image = pygame.transform.scale(pygame.image.load("Image_Assets\\dungeon_background.png"), (Environment.ScreenWidth, Environment.ScreenHeight))
+        self.surface = pygame.Surface((Environment.ScreenWidth, Environment.ScreenHeight))
         self.speed_counter = 0
 
-    def move(self, speed=1):
+    def move(self, speed_multiplier=1):
+        self.speed = (Environment.ScreenWidth/640)*speed_multiplier
         self.surface.fill((255, 0, 255))
-        self.surface.blit(self.image, (0, 0), ((0 + speed*self.speed_counter), 0, (640 - speed*self.speed_counter), 480))
+        self.surface.blit(self.image, (0, 0), ((0 + self.speed*self.speed_counter), 0, (Environment.ScreenWidth - self.speed*self.speed_counter), Environment.ScreenHeight))
         if self.speed_counter:
-            self.surface.blit(self.image, ((640 - speed*self.speed_counter), 0), (0, 0, speed*self.speed_counter, 480))
-        self.speed_counter += 1
-        if self.speed_counter >= int(640/speed):
+            self.surface.blit(self.image, ((Environment.ScreenWidth - self.speed*self.speed_counter), 0), (0, 0, self.speed*self.speed_counter, Environment.ScreenHeight))
+        self.speed_counter += self.speed
+        if self.speed_counter >= int(Environment.ScreenWidth/self.speed):
             self.speed_counter = 0
 
 
