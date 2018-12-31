@@ -1,0 +1,103 @@
+{
+	"card": [
+
+	        {
+        	"name": "Quick",
+            	"type": "Action",
+            	"text": "+1 Card, +1 Action, +1 Reaction",
+            	"image": "Image_Assets\\Card_Example.png"
+        	},
+
+	        {
+        	"name": "Slash",
+            	"type": "Action",
+            	"text": "Deal 6 Damage",
+            	"image": "Image_Assets\\Card_Example.png"
+        	},
+		
+		{
+        	"name": "Stab",
+            	"type": "Action",
+            	"text": "Deal 4 Damage",
+            	"image": "Image_Assets\\Card_Example.png"
+        	},
+		
+		{
+        	"name": "Parry",
+            	"type": "Reaction",
+            	"text": "Reduce 3 Damage, Deal 3 Damage",
+            	"image": "Image_Assets\\Card_Example.png"
+        	},
+		
+		{
+        	"name": "Cleave",
+            	"type": "Action",
+            	"text": "Deal 7 Damage, Deal 3 Damage",
+            	"image": "Image_Assets\\Card_Example.png"
+        	},
+		
+		{
+        	"name": "Defend",
+            	"type": "Reaction",
+            	"text": "Reduce 6 Damage",
+            	"image": "Image_Assets\\Card_Example.png"
+        	},
+		
+		{
+        	"name": "Protect",
+            	"type": "Reaction",
+            	"text": "Reduce 4 Damage",
+            	"image": "Image_Assets\\Card_Example.png"
+        	},
+		
+		{
+        	"name": "Dodge",
+            	"type": "Reaction",
+            	"text": "Avoid 1",
+            	"image": "Image_Assets\\Card_Example.png"
+        	},
+		
+		{
+        	"name": "Initiative",
+            	"type": "Reaction",
+            	"text": "+1 Action",
+            	"image": "Image_Assets\\Card_Example.png"
+        	},
+		
+		{
+        	"name": "Caution",
+            	"type": "Action",
+            	"text": "+1 Reaction",
+            	"image": "Image_Assets\\Card_Example.png"
+        	},
+		
+		{
+        	"name": "Fury",
+            	"type": "Action",
+            	"text": "+2 Actions",
+            	"image": "Image_Assets\\Card_Example.png"
+        	},
+		
+		{
+        	"name": "Speed",
+            	"type": "Reaction",
+            	"text": "+2 Reactions",
+            	"image": "Image_Assets\\Card_Example.png"
+        	},
+		
+		{
+        	"name": "Rummage",
+            	"type": "Action",
+            	"text": "Draw 1 random item from your pack",
+            	"image": "Image_Assets\\Card_Example.png"
+        	},
+		
+		{
+        	"name": "Search",
+            	"type": "Action",
+            	"text": "Draw 1 of 3 random items from your pack",
+            	"image": "Image_Assets\\Card_Example.png"
+        	},
+
+	    ]
+}

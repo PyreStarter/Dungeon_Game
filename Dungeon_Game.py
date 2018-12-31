@@ -3,9 +3,11 @@ from Environment import *
 import pygame
 import random
 import menu
+import json
 
 pygame.font.init()
 font = pygame.font.Font('Fonts\\coders_crux.ttf', 64)
+
 
 # Every encounter (i.e. combat scenario, puzzle, riddle, trap, etc.) will be of this class.
 class Encounter:
@@ -16,6 +18,20 @@ class Encounter:
 
     def add_option(self, option):
         self.options.append(option)
+
+# Card class. Still need to pass in a json, add fields to the card, and draw the card to the screen somehow.
+class Card:
+    def __init__(self, name, type, text):
+        self.width = int(Environment.ScreenWidth/4)
+        self.height = int(self.width*1.4)
+        self.surface = pygame.Surface((self.width, self.height))
+        self.surface.fill((185, 122, 87))
+        self.textbox_surface = pygame.Surface((int(self.width*.8), int(self.height*.3)))
+        self.textbox_surface.fill((239, 228, 176))
+        self.namebox_surface = pygame.Surface((int(self.width * .8), int(self.height * .1)))
+        self.namebox_surface.fill((239, 228, 176))
+        self.surface.blit(self.textbox_surface, (int(*self.width*.1), int(self.height*.6)))
+        self.surface.blit(self.namebox_surface, (int(*self.width * .1), int(self.height * .1)))
 
 
 class Combat_Encounter(Encounter):
@@ -307,7 +323,6 @@ def main():
     item_database.add_item(torch)
 
     player_inventory.add_item(torch)
-
 
 
 # This is creating a weapon, changing its attributes, giving it a combat option, and equiping it to the character.
