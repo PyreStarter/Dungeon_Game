@@ -19,19 +19,30 @@ class Encounter:
     def add_option(self, option):
         self.options.append(option)
 
+
 # Card class. Still need to pass in a json, add fields to the card, and draw the card to the screen somehow.
 class Card:
     def __init__(self, name, type, text):
         self.width = int(Environment.ScreenWidth/4)
         self.height = int(self.width*1.4)
         self.surface = pygame.Surface((self.width, self.height))
-        self.surface.fill((185, 122, 87))
+        if type == 'Action':
+            self.surface.fill((255, 127, 127))
+        elif type == 'Reaction':
+            self.surface.fill((127, 255, 127))
+        else:
+            self.surface.fill((185, 122, 87))
+        self.namebox_text = font.render(name, 1, (255, 255, 255), (255, 0, 255))
+        self.textbox_text = font.render(text, 1, (255, 255, 255), (255, 0, 255))
         self.textbox_surface = pygame.Surface((int(self.width*.8), int(self.height*.3)))
         self.textbox_surface.fill((239, 228, 176))
+        self.textbox_surface.blit(self.textbox_text, (0, 0))
         self.namebox_surface = pygame.Surface((int(self.width * .8), int(self.height * .1)))
         self.namebox_surface.fill((239, 228, 176))
-        self.surface.blit(self.textbox_surface, (int(*self.width*.1), int(self.height*.6)))
-        self.surface.blit(self.namebox_surface, (int(*self.width * .1), int(self.height * .1)))
+        self.namebox_surface.blit(self.namebox_text, (0, 0))
+        self.surface.blit(self.textbox_surface, (int(self.width*.1), int(self.height*.6)))
+        self.surface.blit(self.namebox_surface, (int(self.width * .1), int(self.height * .1)))
+
 
 
 class Combat_Encounter(Encounter):
@@ -324,6 +335,15 @@ def main():
 
     player_inventory.add_item(torch)
 
+# Card Stuff Card Stuff Card Stuff Card Stuff Card Stuff
+
+    card_list = json.load(open("Image_Assets\\card_list.json"))
+    card_index = []
+
+    for i in card_list['card']:
+        card_index.append(Card(i['name'], i['type'], i['text']))
+
+
 
 # This is creating a weapon, changing its attributes, giving it a combat option, and equiping it to the character.
 
@@ -365,7 +385,7 @@ def main():
 # creating the menus
 
     opening_menu = menu.Menu()
-    opening_menu.init(['New Game', 'Options', 'Quit'], menu_buffer)
+    opening_menu.init(['New Game', 'Card Test', 'Quit'], menu_buffer)
     opening = True
 
     opening_menu.draw()
@@ -380,6 +400,7 @@ def main():
 
     running = True
     dungeon = False
+    card_test = False
 
 
 # \\\\\\\\This is the beginning of the while loop that is the entire game. This is where the magic happens./////////
@@ -405,11 +426,29 @@ def main():
                         if opening_menu.get_index() == 2:
                             running = False
                             opening = False
+                        if opening_menu.get_index() == 1:
+                            card_test = True
+                            opening = False
+                            menu_buffer.fill((255, 0, 255))
+                            menu_buffer.blit(card_index[0].surface,
+                                             (int(Environment.ScreenWidth / 2), int(Environment.ScreenHeight / 3)))
                         if opening_menu.get_index() == 0:
                             tavern = True
                             opening = False
                             menu_buffer.fill((255, 0, 255))
                             tavern_menu.draw()
+
+        if card_test:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                    card_test = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        card_test = False
+                        opening = True
+                        menu_buffer.fill((255, 0, 255))
+                        opening_menu.draw()
 
         if tavern:
             for event in pygame.event.get():
@@ -538,7 +577,7 @@ def main():
                                     menu_buffer.fill((255, 0, 255))
                                     screen_buffer_2.fill((255, 0, 255))
 
-        if dungeonmenu or tavern or opening or top_birb.running:
+        if dungeonmenu or tavern or opening or top_birb.running or card_test:
             menu_boolean = True
         else:
             menu_boolean = False
