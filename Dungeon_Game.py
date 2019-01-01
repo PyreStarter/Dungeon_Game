@@ -32,11 +32,18 @@ class Card:
             self.surface.fill((127, 255, 127))
         else:
             self.surface.fill((185, 122, 87))
-        self.namebox_text = font.render(name, 1, (255, 255, 255), (255, 0, 255))
-        self.textbox_text = font.render(text, 1, (255, 255, 255), (255, 0, 255))
-        self.textbox_surface = pygame.Surface((int(self.width*.8), int(self.height*.3)))
-        self.textbox_surface.fill((239, 228, 176))
-        self.textbox_surface.blit(self.textbox_text, (0, 0))
+        self.text_lines = text.split("_")
+        self.line_length = 0
+        for i in self.text_lines:
+            j = font.render(i, 1, (255, 255, 255), (255, 0, 255, 0))
+            if j.get_width() > self.line_length:
+                self.line_length = j.get_width()
+        self.line_height = len(self.text_lines)*font.get_height()
+        self.namebox_text = font.render(name, 1, (255, 255, 255), (255, 0, 255, 0))
+        self.textbox_surface_0 = pygame.Surface((self.line_length, self.line_height))
+        for i in range(len(self.text_lines)):
+            self.textbox_surface_0.blit(font.render(self.text_lines[i], 1, (255, 255, 255), (255, 0, 255, 0)), (0, i*font.get_height()))
+        self.textbox_surface = pygame.transform.scale(self.textbox_surface_0, (int(self.width*.8), int(self.height*.3)))
         self.namebox_surface = pygame.Surface((int(self.width * .8), int(self.height * .1)))
         self.namebox_surface.fill((239, 228, 176))
         self.namebox_surface.blit(self.namebox_text, (0, 0))
@@ -57,7 +64,7 @@ class Combat_Encounter(Encounter):
     def set_health(self, health):
         self.health = health
         self.buffer.blit(self.health_image, (18, 32))
-        self.health_image = font.render("HP: " + str(self.health), 1, (255, 255, 255), (255, 0, 255))
+        self.health_image = font.render("HP: " + str(self.health), 1, (255, 255, 255), (255, 0, 255, 0))
         self.buffer.blit(self.health_image, (18, 32))
         self.health_image.fill((255, 0, 255))
 
@@ -430,7 +437,8 @@ def main():
                             card_test = True
                             opening = False
                             menu_buffer.fill((255, 0, 255))
-                            menu_buffer.blit(card_index[0].surface,
+                            t = 0
+                            menu_buffer.blit(card_index[t].surface,
                                              (int(Environment.ScreenWidth / 2), int(Environment.ScreenHeight / 3)))
                         if opening_menu.get_index() == 0:
                             tavern = True
@@ -449,6 +457,16 @@ def main():
                         opening = True
                         menu_buffer.fill((255, 0, 255))
                         opening_menu.draw()
+                    if event.key == pygame.K_UP:
+                        t += 1
+                        menu_buffer.fill((255, 0, 255))
+                        menu_buffer.blit(card_index[t].surface,
+                                         (int(Environment.ScreenWidth / 2), int(Environment.ScreenHeight / 3)))
+                    if event.key == pygame.K_DOWN:
+                        t -= 1
+                        menu_buffer.fill((255, 0, 255))
+                        menu_buffer.blit(card_index[t].surface,
+                                         (int(Environment.ScreenWidth / 2), int(Environment.ScreenHeight / 3)))
 
         if tavern:
             for event in pygame.event.get():

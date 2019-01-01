@@ -4,7 +4,7 @@
 				{
 				"name": "Quick",
 					"type": "Action",
-					"text": "+1 Card, +1 Action, +1 Reaction",
+					"text": "+1 Card_+1 Action_+1 Reaction",
 					"image": "Image_Assets\\Card_Example.png"
 				},
 
@@ -25,14 +25,14 @@
 				{
 				"name": "Parry",
 					"type": "Reaction",
-					"text": "Reduce 3 Damage, Deal 3 Damage",
+					"text": "Reduce 3 Damage_Deal 3 Damage",
 					"image": "Image_Assets\\Card_Example.png"
 				},
 			
 				{
 				"name": "Cleave",
 					"type": "Action",
-					"text": "Deal 7 Damage, Deal 3 Damage",
+					"text": "Deal 7 Damage_Deal 3 Damage",
 					"image": "Image_Assets\\Card_Example.png"
 				},
 			
