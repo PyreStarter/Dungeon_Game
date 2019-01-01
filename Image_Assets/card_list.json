@@ -88,14 +88,14 @@
 				{
 				"name": "Rummage",
 					"type": "Action",
-					"text": "Draw 1 random item from your pack",
+					"text": "Draw 1 random_item from your_pack",
 					"image": "Image_Assets\\Card_Example.png"
 				},
 			
 				{
 				"name": "Search",
 					"type": "Action",
-					"text": "Draw 1 of 3 random items from your pack",
+					"text": "Draw 1 of 3_random items_from your pack",
 					"image": "Image_Assets\\Card_Example.png"
 				}
 

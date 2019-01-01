@@ -27,18 +27,26 @@ class Card:
         self.height = int(self.width*1.4)
         self.surface = pygame.Surface((self.width, self.height))
         if type == 'Action':
-            self.surface.fill((255, 127, 127))
+            self.surface.fill((255, 100, 100))
         elif type == 'Reaction':
             self.surface.fill((127, 255, 127))
         else:
             self.surface.fill((185, 122, 87))
         self.text_lines = text.split("_")
         self.line_length = 0
+        if len(self.text_lines) == 1:
+            if len(self.text_lines[0]) < 12:
+                self.diff = 12 - len(self.text_lines[0])
+                for i in range(self.diff):
+                    self.text_lines[0] += " "
         for i in self.text_lines:
             j = font.render(i, 1, (255, 255, 255), (255, 0, 255, 0))
             if j.get_width() > self.line_length:
                 self.line_length = j.get_width()
-        self.line_height = len(self.text_lines)*font.get_height()
+        if len(self.text_lines) >= 3:
+            self.line_height = len(self.text_lines)*font.get_height()
+        else:
+            self.line_height = 3*font.get_height()
         self.namebox_text = font.render(name, 1, (255, 255, 255), (255, 0, 255, 0))
         self.textbox_surface_0 = pygame.Surface((self.line_length, self.line_height))
         for i in range(len(self.text_lines)):
