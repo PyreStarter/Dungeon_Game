@@ -26,34 +26,46 @@ class Card:
         self.width = int(Environment.ScreenWidth/4)
         self.height = int(self.width*1.4)
         self.surface = pygame.Surface((self.width, self.height))
+        self.textbox_color = (239, 228, 176)
+        #Adjusts the color of the card based on card type
         if type == 'Action':
-            self.surface.fill((255, 100, 100))
+            self.color = (255, 100, 100)
+            self.surface.fill(self.color)
         elif type == 'Reaction':
-            self.surface.fill((127, 255, 127))
+            self.color = (127, 255, 127)
+            self.surface.fill(self.color)
         else:
-            self.surface.fill((185, 122, 87))
+            self.color = (185, 122, 87)
+            self.surface.fill(self.color)
         self.text_lines = text.split("_")
         self.line_length = 0
+        #If a single line is too short, this appends spaces to the end to keep the scaling function from stretching it
         if len(self.text_lines) == 1:
             if len(self.text_lines[0]) < 12:
                 self.diff = 12 - len(self.text_lines[0])
                 for i in range(self.diff):
                     self.text_lines[0] += " "
+        #This finds the longest line and attributes it to the width of the text box
         for i in self.text_lines:
             j = font.render(i, 1, (255, 255, 255), (255, 0, 255, 0))
             if j.get_width() > self.line_length:
                 self.line_length = j.get_width()
+        #If the text box is shorter than 3 lines, this sets the height to 3 lines to keep it from being stretched
         if len(self.text_lines) >= 3:
             self.line_height = len(self.text_lines)*font.get_height()
         else:
             self.line_height = 3*font.get_height()
-        self.namebox_text = font.render(name, 1, (255, 255, 255), (255, 0, 255, 0))
+        self.namebox_text = font.render(name, 1, (0, 0, 0), self.textbox_color)
         self.textbox_surface_0 = pygame.Surface((self.line_length, self.line_height))
+        self.textbox_surface_0.fill(self.textbox_color)
+        self.text_buffer = pygame.Surface((self.line_length, self.line_height))
+        self.text_buffer.fill(self.textbox_color)
         for i in range(len(self.text_lines)):
-            self.textbox_surface_0.blit(font.render(self.text_lines[i], 1, (255, 255, 255), (255, 0, 255, 0)), (0, i*font.get_height()))
+            self.text_buffer = font.render(self.text_lines[i], 1, (0, 0, 0), (self.textbox_color))
+            self.textbox_surface_0.blit(self.text_buffer, (0, i*font.get_height()))
         self.textbox_surface = pygame.transform.scale(self.textbox_surface_0, (int(self.width*.8), int(self.height*.3)))
         self.namebox_surface = pygame.Surface((int(self.width * .8), int(self.height * .1)))
-        self.namebox_surface.fill((239, 228, 176))
+        self.namebox_surface.fill(self.textbox_color)
         self.namebox_surface.blit(self.namebox_text, (0, 0))
         self.surface.blit(self.textbox_surface, (int(self.width*.1), int(self.height*.6)))
         self.surface.blit(self.namebox_surface, (int(self.width * .1), int(self.height * .1)))
