@@ -505,8 +505,7 @@ def main():
                             opening = False
                             menu_buffer.fill((255, 0, 255))
                             t = 0
-                            menu_buffer.blit(card_index[t].surface,
-                                             (int(Environment.ScreenWidth / 2), int(Environment.ScreenHeight / 3)))
+                            menu_buffer.blit(card_index[t].surface, (int(Environment.ScreenWidth * .3), 20))
                             test_deck = Deck()
                         if opening_menu.get_index() == 0:
                             tavern = True
@@ -533,7 +532,7 @@ def main():
                         #menu_buffer.fill((255, 0, 255))
                         menu_buffer.blit(decklist_buffer, (0, 0))
                         menu_buffer.blit(card_index[t].surface,
-                                         (int(Environment.ScreenWidth / 2), int(Environment.ScreenHeight / 3)))
+                                         (int(Environment.ScreenWidth * .3), 20))
                     if event.key == pygame.K_DOWN:
                         if t > (len(card_index)*-1):
                             t -= 1
@@ -542,7 +541,7 @@ def main():
                         #menu_buffer.fill((255, 0, 255))
                         menu_buffer.blit(decklist_buffer, (0, 0))
                         menu_buffer.blit(card_index[t].surface,
-                                         (int(Environment.ScreenWidth / 2), int(Environment.ScreenHeight / 3)))
+                                         (int(Environment.ScreenWidth*.3), 20))
                     if event.key == pygame.K_RETURN:
                         test_deck.add_card(card_index[t])
                         decklist_buffer.fill((255, 0, 255))
@@ -552,7 +551,13 @@ def main():
                                                                      (255, 0, 255)), (0, i * font.get_height()))
                         menu_buffer.blit(decklist_buffer, (0, 0))
                         menu_buffer.blit(card_index[t].surface,
-                                         (int(Environment.ScreenWidth / 2), int(Environment.ScreenHeight / 3)))
+                                         (int(Environment.ScreenWidth * .3), 20))
+                    if event.key == pygame.K_h:
+                        active_cards = []
+                        hand = random.sample(test_deck.list, 5)
+                        for i in range(len(hand)):
+                            active_cards.append(Card_Object(hand[i], int(Environment.ScreenWidth/len(hand)), int(Environment.ScreenWidth/len(hand)*1.4)))
+                            menu_buffer.blit(active_cards[i].surface, (active_cards[i].width * i, Environment.ScreenHeight - active_cards[i].height))
 
 
         if tavern:
