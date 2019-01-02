@@ -20,9 +20,52 @@ class Encounter:
         self.options.append(option)
 
 
-# Card class. Still need to pass in a json, add fields to the card, and draw the card to the screen somehow.
+class Deck:
+    def __init__(self):
+        self.length = 0
+        self.list = []
+
+    def add_card(self, card):
+        self.length += 1
+        self.list.append(card)
+
+    def remove_card(self, card):
+        for i in self.list:
+            if i == card:
+                del i
+                return 1
+
+    def get_decklist(self):
+        decklist = []
+        tempdecklist = []
+        for i in self.list:
+            if i not in tempdecklist:
+                decklist.append([i.name, 1])
+                tempdecklist.append(i)
+            else:
+                for j in decklist:
+                    if i.name == j[0]:
+                        j[1] += 1
+        return decklist
+
+
+class Card_Object:
+    def __init__(self, card, width, height):
+        self.card = card
+        self.width = width
+        self.height = height
+        self.surface = pygame.Surface((self.width, self.height))
+        self.x_position = 0
+        self.x_position = 0
+        self.surface.blit(pygame.transform.scale(card.surface, (self.width, self.height)), (0, 0))
+
+
+# Card class. For the list of existing cards
 class Card:
     def __init__(self, name, type, text):
+        self.name = name
+        self.text = text
+        self.type = type
         self.width = int(Environment.ScreenWidth/4)
         self.height = int(self.width*1.4)
         self.surface = pygame.Surface((self.width, self.height))
@@ -131,6 +174,7 @@ class Option:
         self.damage = damage
         self.chance = chance
 
+
 # This is the item class. Each item should have it's own class that will inherit this base class.
 class Item:
     def __init__(self, image, rarity, value, name):
@@ -143,6 +187,7 @@ class Item:
     def use(self, quantity=1):
         print('Item is not being used properly')
 
+
 # This is the weapon class. It is a subclass of Item. All weapons will be of this class.
 class Weapon(Item):
     def __init__(self, image, rarity, value, name):
@@ -153,6 +198,7 @@ class Weapon(Item):
 
     def add_option(self, option):
         self.options.append(option)
+
 
 # Torch class
 class Torch(Item):
@@ -349,6 +395,7 @@ def main():
     screen_buffer_1.set_colorkey((255, 0, 255))
     screen_buffer_2.set_colorkey((255, 0, 255))
     menu_buffer.set_colorkey((255, 0, 255))
+    decklist_buffer = menu_buffer
 
     dungeon_background = Background()
     player = Player()
@@ -460,6 +507,7 @@ def main():
                             t = 0
                             menu_buffer.blit(card_index[t].surface,
                                              (int(Environment.ScreenWidth / 2), int(Environment.ScreenHeight / 3)))
+                            test_deck = Deck()
                         if opening_menu.get_index() == 0:
                             tavern = True
                             opening = False
@@ -478,15 +526,34 @@ def main():
                         menu_buffer.fill((255, 0, 255))
                         opening_menu.draw()
                     if event.key == pygame.K_UP:
-                        t += 1
-                        menu_buffer.fill((255, 0, 255))
+                        if t < len(card_index) - 1:
+                            t += 1
+                        else:
+                            t = 1 - len(card_index)
+                        #menu_buffer.fill((255, 0, 255))
+                        menu_buffer.blit(decklist_buffer, (0, 0))
                         menu_buffer.blit(card_index[t].surface,
                                          (int(Environment.ScreenWidth / 2), int(Environment.ScreenHeight / 3)))
                     if event.key == pygame.K_DOWN:
-                        t -= 1
-                        menu_buffer.fill((255, 0, 255))
+                        if t > (len(card_index)*-1):
+                            t -= 1
+                        else:
+                            t = len(card_index) - 1
+                        #menu_buffer.fill((255, 0, 255))
+                        menu_buffer.blit(decklist_buffer, (0, 0))
                         menu_buffer.blit(card_index[t].surface,
                                          (int(Environment.ScreenWidth / 2), int(Environment.ScreenHeight / 3)))
+                    if event.key == pygame.K_RETURN:
+                        test_deck.add_card(card_index[t])
+                        decklist_buffer.fill((255, 0, 255))
+                        for i in range(len(test_deck.get_decklist())):
+                            decklist_buffer.blit(font.render(str(test_deck.get_decklist()[i][1]) + "x " +
+                                                         test_deck.get_decklist()[i][0], 1, (255, 255, 255),
+                                                                     (255, 0, 255)), (0, i * font.get_height()))
+                        menu_buffer.blit(decklist_buffer, (0, 0))
+                        menu_buffer.blit(card_index[t].surface,
+                                         (int(Environment.ScreenWidth / 2), int(Environment.ScreenHeight / 3)))
+
 
         if tavern:
             for event in pygame.event.get():
