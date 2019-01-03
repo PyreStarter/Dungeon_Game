@@ -74,12 +74,15 @@ class Card:
         if type == 'Action':
             self.color = (255, 100, 100)
             self.surface.fill(self.color)
+            pygame.draw.rect(self.surface, (100, 100, 100), (0, 0, self.width, self.height), 10)
         elif type == 'Reaction':
             self.color = (127, 255, 127)
             self.surface.fill(self.color)
+            pygame.draw.rect(self.surface, (100, 100, 100), (0, 0, self.width, self.height), 10)
         else:
             self.color = (185, 122, 87)
             self.surface.fill(self.color)
+            pygame.draw.rect(self.surface, (100, 100, 100), (0, 0, self.width, self.height), 10)
         self.text_lines = text.split("_")
         self.line_length = 0
         #If a single line is too short, this appends spaces to the end to keep the scaling function from stretching it
@@ -105,11 +108,11 @@ class Card:
         self.text_buffer.fill(self.textbox_color)
         for i in range(len(self.text_lines)):
             self.text_buffer = font.render(self.text_lines[i], 1, (0, 0, 0), (self.textbox_color))
-            self.textbox_surface_0.blit(self.text_buffer, (0, i*font.get_height()))
+            self.textbox_surface_0.blit(self.text_buffer, (1, i*font.get_height() +1))
         self.textbox_surface = pygame.transform.scale(self.textbox_surface_0, (int(self.width*.8), int(self.height*.3)))
         self.namebox_surface = pygame.Surface((int(self.width * .8), int(self.height * .1)))
         self.namebox_surface.fill(self.textbox_color)
-        self.namebox_surface.blit(self.namebox_text, (0, 0))
+        self.namebox_surface.blit(self.namebox_text, (1, 1))
         self.surface.blit(self.textbox_surface, (int(self.width*.1), int(self.height*.6)))
         self.surface.blit(self.namebox_surface, (int(self.width * .1), int(self.height * .1)))
 
