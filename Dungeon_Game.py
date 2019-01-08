@@ -80,6 +80,10 @@ class Card:
             self.color = (127, 255, 127)
             self.surface.fill(self.color)
             pygame.draw.rect(self.surface, (100, 100, 100), (0, 0, self.width, self.height), 10)
+        elif type == 'Passive':
+            self.color = (63, 127, 255)
+            self.surface.fill(self.color)
+            pygame.draw.rect(self.surface, (100, 100, 100), (0, 0, self.width, self.height), 10)
         else:
             self.color = (185, 122, 87)
             self.surface.fill(self.color)
@@ -87,11 +91,11 @@ class Card:
         self.text_lines = text.split("_")
         self.line_length = 0
         #If a single line is too short, this appends spaces to the end to keep the scaling function from stretching it
-        if len(self.text_lines) == 1:
-            if len(self.text_lines[0]) < 12:
-                self.diff = 12 - len(self.text_lines[0])
+        for j in range(len(self.text_lines)):
+            if len(self.text_lines[j]) < 12:
+                self.diff = 12 - len(self.text_lines[j])
                 for i in range(self.diff):
-                    self.text_lines[0] += " "
+                    self.text_lines[j] += " "
 
         if len(self.name) < 12:
             self.diff = 12 - len(self.name)
@@ -522,7 +526,7 @@ def main():
                             opening = False
                             menu_buffer.fill((255, 0, 255))
                             t = 0
-                            menu_buffer.blit(card_index[t].surface, (int(Environment.ScreenWidth * .3), 20))
+                            menu_buffer.blit(card_index[t].surface, (int(Environment.ScreenWidth * .4), 20))
                             test_deck = Deck()
                         if opening_menu.get_index() == 0:
                             tavern = True
@@ -548,7 +552,7 @@ def main():
                             t = 1 - len(card_index)
                         menu_buffer.blit(decklist_buffer, (0, 0))
                         menu_buffer.blit(card_index[t].surface,
-                                         (int(Environment.ScreenWidth * .3), 20))
+                                         (int(Environment.ScreenWidth * .4), 20))
                     if event.key == pygame.K_DOWN:
                         if t > (len(card_index)*-1):
                             t -= 1
@@ -556,7 +560,7 @@ def main():
                             t = len(card_index) - 1
                         menu_buffer.blit(decklist_buffer, (0, 0))
                         menu_buffer.blit(card_index[t].surface,
-                                         (int(Environment.ScreenWidth*.3), 20))
+                                         (int(Environment.ScreenWidth*.4), 20))
                     if event.key == pygame.K_RETURN:
                         test_deck.add_card(card_index[t])
                         decklist_buffer.fill((255, 0, 255))
@@ -566,7 +570,7 @@ def main():
                                                                      (255, 0, 255)), (0, i * font.get_height()))
                         menu_buffer.blit(decklist_buffer, (0, 0))
                         menu_buffer.blit(card_index[t].surface,
-                                         (int(Environment.ScreenWidth * .3), 20))
+                                         (int(Environment.ScreenWidth * .4), 20))
                     if event.key == pygame.K_h:
                         active_cards = []
                         hand = random.sample(test_deck.list, 5)

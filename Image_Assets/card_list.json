@@ -11,49 +11,70 @@
 				{
 				"name": "Slash",
 					"type": "Action",
-					"text": "Deal 6 Damage",
+					"text": "+2 Damage",
+					"image": "Image_Assets\\Card_Example.png"
+				},
+				
+				{
+				"name": "Strike",
+					"type": "Passive",
+					"text": "Passive:_+1 Damage",
 					"image": "Image_Assets\\Card_Example.png"
 				},
 			
 				{
 				"name": "Stab",
 					"type": "Action",
-					"text": "Deal 4 Damage",
+					"text": "+1 Damage_+1 Card",
 					"image": "Image_Assets\\Card_Example.png"
 				},
 			
 				{
 				"name": "Parry",
 					"type": "Reaction",
-					"text": "Reduce 3 Damage_Deal 3 Damage",
+					"text": "+1 Block_+1 Action",
 					"image": "Image_Assets\\Card_Example.png"
 				},
 			
 				{
 				"name": "Cleave",
 					"type": "Action",
-					"text": "Deal 7 Damage_Deal 3 Damage",
+					"text": "+2 Damage_+1 Damage",
+					"image": "Image_Assets\\Card_Example.png"
+				},
+				
+				{
+				"name": "Crush",
+					"type": "Action",
+					"text": "+3 Damage",
 					"image": "Image_Assets\\Card_Example.png"
 				},
 			
 				{
 				"name": "Defend",
 					"type": "Reaction",
-					"text": "Reduce 6 Damage",
+					"text": "+2 Block",
 					"image": "Image_Assets\\Card_Example.png"
 				},
 			
 				{
 				"name": "Protect",
-					"type": "Reaction",
-					"text": "Reduce 4 Damage",
+					"type": "Passive",
+					"text": "Passive:_+1 Block",
 					"image": "Image_Assets\\Card_Example.png"
 				},
 			
 				{
 				"name": "Dodge",
 					"type": "Reaction",
-					"text": "Avoid 1",
+					"text": "Avoid an attack",
+					"image": "Image_Assets\\Card_Example.png"
+				},
+				
+				{
+				"name": "Untouchable",
+					"type": "Reaction",
+					"text": "Avoid an attack_Avoid an attack",
 					"image": "Image_Assets\\Card_Example.png"
 				},
 			
@@ -63,11 +84,25 @@
 					"text": "+1 Action",
 					"image": "Image_Assets\\Card_Example.png"
 				},
+				
+				{
+				"name": "Unrivaled Initiative",
+					"type": "Reaction",
+					"text": "+2 Actions",
+					"image": "Image_Assets\\Card_Example.png"
+				},
 			
 				{
 				"name": "Caution",
 					"type": "Action",
 					"text": "+1 Reaction",
+					"image": "Image_Assets\\Card_Example.png"
+				},
+				
+				{
+				"name": "Danger Sense",
+					"type": "Action",
+					"text": "+2 Reactions",
 					"image": "Image_Assets\\Card_Example.png"
 				},
 			
