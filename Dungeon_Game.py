@@ -13,6 +13,7 @@ font = pygame.font.Font('Fonts\\coders_crux.ttf', 64)
 class Encounter:
     def __init__(self, image):
         self.menu = menu.Menu()
+        self.menu.menu_width = Environment.ScreenWidth
         self.image = image
         self.options = []
 
@@ -138,7 +139,7 @@ class Card:
 
 class Combat_Encounter(Encounter):
     def __init__(self, image, menu_buffer, health):
-        Encounter.__init__(self, image)
+        Encounter.__init__(self, pygame.transform.scale(image, (Environment.ScreenWidth, Environment.ScreenHeight)))
         self.buffer = menu_buffer
         self.running = False
         self.health = health
@@ -159,31 +160,31 @@ class Combat_Encounter(Encounter):
                             str(self.options[2].name) + ' - ' + str(self.options[2].text),
                             str(self.options[3].name) + ' - ' + str(self.options[3].text),
                             'Run Away'],
-                           self.buffer
+                           self.buffer, width=Environment.ScreenWidth
                            )
         elif len(self.options) == 3:
             self.menu.init([str(self.options[0].name) + ' - ' + str(self.options[0].text),
                             str(self.options[1].name) + ' - ' + str(self.options[1].text),
                             str(self.options[2].name) + ' - ' + str(self.options[2].text),
                             'Run Away'],
-                           self.buffer
+                           self.buffer, width=Environment.ScreenWidth
                            )
         elif len(self.options) == 2:
             self.menu.init([str(self.options[0].name) + ' - ' + str(self.options[0].text),
                             str(self.options[1].name) + ' - ' + str(self.options[1].text),
                             'Run Away'],
-                           self.buffer
+                           self.buffer, width=Environment.ScreenWidth
                            )
         elif len(self.options) == 1:
             self.menu.init([str(self.options[0].name) + ' - ' + str(self.options[0].text),
                             'Run Away'],
-                           self.buffer
+                           self.buffer, width=Environment.ScreenWidth
                            )
         else:
             return 0
         self.menu.x = 0
         self.menu.y = Environment.ScreenHeight - self.menu.height
-        self.menu.menu_width = Environment.ScreenWidth
+
 
 
 # This class is for defining the unique options that will be provided by certain scenarios, items, and skills.
@@ -526,7 +527,7 @@ def main():
                             opening = False
                             menu_buffer.fill((255, 0, 255))
                             t = 0
-                            menu_buffer.blit(card_index[t].surface, (int(Environment.ScreenWidth * .4), 20))
+                            menu_buffer.blit(card_index[t].surface, (int(Environment.ScreenWidth * .5), 20))
                             test_deck = Deck()
                         if opening_menu.get_index() == 0:
                             tavern = True
@@ -552,7 +553,7 @@ def main():
                             t = 1 - len(card_index)
                         menu_buffer.blit(decklist_buffer, (0, 0))
                         menu_buffer.blit(card_index[t].surface,
-                                         (int(Environment.ScreenWidth * .4), 20))
+                                         (int(Environment.ScreenWidth * .5), 20))
                     if event.key == pygame.K_DOWN:
                         if t > (len(card_index)*-1):
                             t -= 1
@@ -560,7 +561,7 @@ def main():
                             t = len(card_index) - 1
                         menu_buffer.blit(decklist_buffer, (0, 0))
                         menu_buffer.blit(card_index[t].surface,
-                                         (int(Environment.ScreenWidth*.4), 20))
+                                         (int(Environment.ScreenWidth*.5), 20))
                     if event.key == pygame.K_RETURN:
                         test_deck.add_card(card_index[t])
                         decklist_buffer.fill((255, 0, 255))
@@ -570,7 +571,7 @@ def main():
                                                                      (255, 0, 255)), (0, i * font.get_height()))
                         menu_buffer.blit(decklist_buffer, (0, 0))
                         menu_buffer.blit(card_index[t].surface,
-                                         (int(Environment.ScreenWidth * .4), 20))
+                                         (int(Environment.ScreenWidth * .5), 20))
                     if event.key == pygame.K_h:
                         active_cards = []
                         hand = random.sample(test_deck.list, 5)

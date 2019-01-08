@@ -24,8 +24,10 @@ class Menu:
         self.menu_widget = pygame.Surface
         self.active = False
 
-    def init(self, options, surface):
+    def init(self, options, surface, width=0, height=0):
         self.surface = surface
+        self.width = width
+        self.height = height
         for item in options:
             self.options.append(MenuOption(item))
         self.fill_menu_widget()

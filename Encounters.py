@@ -16,5 +16,3 @@ class Top_Birb(Encounter):
         self.menu = menu.Menu([str(sword_attack_option.name) + ' - ' + str(sword_attack_option.text), 'Cry', 'Run Away'],
                         menu_buffer)
 
-        #self.menu.move_menu(0, (Environment.ScreenWidth - self.menu.menu_height))
-        #self.menu.menu_width = Environment.ScreenHeight
