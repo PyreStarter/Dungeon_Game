@@ -62,7 +62,8 @@ class Card_Object:
 
 # Card class. For the list of existing cards
 class Card:
-    def __init__(self, name, type, text):
+    def __init__(self, name, type, text, image):
+        self.image = image
         self.name = name
         self.text = text
         self.type = type
@@ -91,6 +92,11 @@ class Card:
                 self.diff = 12 - len(self.text_lines[0])
                 for i in range(self.diff):
                     self.text_lines[0] += " "
+
+        if len(self.name) < 12:
+            self.diff = 12 - len(self.name)
+            for i in range(self.diff):
+                self.name += " "
         #This finds the longest line and attributes it to the width of the text box
         for i in self.text_lines:
             j = font.render(i, 1, (255, 255, 255), (255, 0, 255, 0))
@@ -101,7 +107,7 @@ class Card:
             self.line_height = len(self.text_lines)*font.get_height()
         else:
             self.line_height = 3*font.get_height()
-        self.namebox_text = font.render(name, 1, (0, 0, 0), self.textbox_color)
+        self.namebox_text = font.render(self.name, 1, (0, 0, 0), self.textbox_color)
         self.textbox_surface_0 = pygame.Surface((self.line_length, self.line_height))
         self.textbox_surface_0.fill(self.textbox_color)
         self.text_buffer = pygame.Surface((self.line_length, self.line_height))
@@ -112,9 +118,17 @@ class Card:
         self.textbox_surface = pygame.transform.scale(self.textbox_surface_0, (int(self.width*.8), int(self.height*.3)))
         self.namebox_surface = pygame.Surface((int(self.width * .8), int(self.height * .1)))
         self.namebox_surface.fill(self.textbox_color)
-        self.namebox_surface.blit(self.namebox_text, (1, 1))
-        self.surface.blit(self.textbox_surface, (int(self.width*.1), int(self.height*.6)))
+        self.namebox_surface_0 = pygame.Surface((int(self.namebox_text.get_width()), int(self.namebox_surface.get_height())))
+        self.namebox_surface_0.fill(self.textbox_color)
+        self.namebox_surface_0.blit(self.namebox_text, (1, 1))
+        self.namebox_surface_0 = pygame.transform.scale(self.namebox_surface_0, (self.namebox_surface.get_width(),
+                                                                                 self.namebox_surface.get_height()))
+        self.namebox_surface.blit(self.namebox_surface_0, (0, 0))
+        self.image_surface = pygame.transform.scale(self.image, (int(self.width * .8), int(self.height * .4) - 10))
+        self.surface.blit(self.image_surface, (int(self.width * .1), int(self.height * .2) + 5))
+        self.surface.blit(self.textbox_surface, (int(self.width * .1), int(self.height * .6)))
         self.surface.blit(self.namebox_surface, (int(self.width * .1), int(self.height * .1)))
+
 
 
 
@@ -418,7 +432,7 @@ def main():
     card_index = []
 
     for i in card_list['card']:
-        card_index.append(Card(i['name'], i['type'], i['text']))
+        card_index.append(Card(i['name'], i['type'], i['text'], pygame.image.load(i['image'])))
 
 
 
@@ -532,7 +546,6 @@ def main():
                             t += 1
                         else:
                             t = 1 - len(card_index)
-                        #menu_buffer.fill((255, 0, 255))
                         menu_buffer.blit(decklist_buffer, (0, 0))
                         menu_buffer.blit(card_index[t].surface,
                                          (int(Environment.ScreenWidth * .3), 20))
@@ -541,7 +554,6 @@ def main():
                             t -= 1
                         else:
                             t = len(card_index) - 1
-                        #menu_buffer.fill((255, 0, 255))
                         menu_buffer.blit(decklist_buffer, (0, 0))
                         menu_buffer.blit(card_index[t].surface,
                                          (int(Environment.ScreenWidth*.3), 20))

@@ -97,6 +97,62 @@
 					"type": "Action",
 					"text": "Draw 1 of 3_random items_from your pack",
 					"image": "Image_Assets\\Card_Example.png"
+				},
+				
+				{
+				"name": "Sprained Foot",
+					"type": "Injury",
+					"text": "Passive:_When drawn,_lose 1 reaction",
+					"image": "Image_Assets\\Card_Example.png"
+				},
+				
+				{
+				"name": "Fractured Arm",
+					"type": "Injury",
+					"text": "Passive:_When drawn,_lose 1 action",
+					"image": "Image_Assets\\Card_Example.png"
+				},
+				
+				{
+				"name": "Cracked Rib",
+					"type": "Injury",
+					"text": "Passive:_You can play only_1 card each turn",
+					"image": "Image_Assets\\Card_Example.png"
+				},
+				
+				{
+				"name": "Bleeding",
+					"type": "Injury",
+					"text": "Passive:_At end of turn,_shuffle into deck",
+					"image": "Image_Assets\\Card_Example.png"
+				},
+				
+				{
+				"name": "Gashed Leg",
+					"type": "Injury",
+					"text": "Passive:_When you play a_reaction, add a_bleeding",
+					"image": "Image_Assets\\Card_Example.png"
+				},
+				
+				{
+				"name": "Sliced Hand",
+					"type": "Injury",
+					"text": "Passive:_When you play an_action, add a_bleeding",
+					"image": "Image_Assets\\Card_Example.png"
+				},
+				
+				{
+				"name": "Puncture Wound",
+					"type": "Injury",
+					"text": "Passive:_When you draw 1_discard 1",
+					"image": "Image_Assets\\Card_Example.png"
+				},
+				
+				{
+				"name": "Concussion",
+					"type": "Injury",
+					"text": "Passive:_When drawn, discard_another random card",
+					"image": "Image_Assets\\Card_Example.png"
 				}
 
 			]
