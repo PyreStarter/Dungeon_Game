@@ -1,0 +1,31 @@
+{
+	"item": [
+
+				{
+				"name": "Dagger",
+					"value": 1,
+					"rarity": 1,
+					"image": "Image_Assets\\Card_Example.png",
+					"card": [
+								"Quick", 
+								"Stab",
+								"Stab"
+							]
+				},
+				
+				{
+				"name": "Rapier",
+					"value": 1,
+					"rarity": 1,
+					"image": "Image_Assets\\Card_Example.png",
+					"card": [
+								"Quick", 
+								"Parry",
+								"Stab"
+							]
+				}
+
+				
+
+			]
+}

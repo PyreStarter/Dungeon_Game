@@ -72,6 +72,7 @@ class Card:
         self.height = int(self.width*1.4)
         self.surface = pygame.Surface((self.width, self.height))
         self.textbox_color = (239, 228, 176)
+        self.name_buffer = self.name
         #Adjusts the color of the card based on card type
         if type == 'Action':
             self.color = (255, 100, 100)
@@ -98,10 +99,10 @@ class Card:
                 for i in range(self.diff):
                     self.text_lines[j] += " "
 
-        if len(self.name) < 12:
+        if len(self.name_buffer) < 12:
             self.diff = 12 - len(self.name)
             for i in range(self.diff):
-                self.name += " "
+                self.name_buffer += " "
         #This finds the longest line and attributes it to the width of the text box
         for i in self.text_lines:
             j = font.render(i, 1, (255, 255, 255), (255, 0, 255, 0))
@@ -112,7 +113,7 @@ class Card:
             self.line_height = len(self.text_lines)*font.get_height()
         else:
             self.line_height = 3*font.get_height()
-        self.namebox_text = font.render(self.name, 1, (0, 0, 0), self.textbox_color)
+        self.namebox_text = font.render(self.name_buffer, 1, (0, 0, 0), self.textbox_color)
         self.textbox_surface_0 = pygame.Surface((self.line_length, self.line_height))
         self.textbox_surface_0.fill(self.textbox_color)
         self.text_buffer = pygame.Surface((self.line_length, self.line_height))
@@ -133,8 +134,6 @@ class Card:
         self.surface.blit(self.image_surface, (int(self.width * .1), int(self.height * .2) + 5))
         self.surface.blit(self.textbox_surface, (int(self.width * .1), int(self.height * .6)))
         self.surface.blit(self.namebox_surface, (int(self.width * .1), int(self.height * .1)))
-
-
 
 
 class Combat_Encounter(Encounter):
@@ -208,6 +207,13 @@ class Item:
 
     def use(self, quantity=1):
         print('Item is not being used properly')
+
+
+class Card_Item(Item):
+    def __init__(self, image, rarity, value, name, cardlist):
+        Item.__init__(self, image, rarity, value, name)
+        self.card_list = cardlist
+        self.card_list_length = len(cardlist)
 
 
 # This is the weapon class. It is a subclass of Item. All weapons will be of this class.
@@ -422,6 +428,7 @@ def main():
     dungeon_background = Background()
     player = Player()
     item_database = Database()
+    player_deck = Deck()
 
     player_inventory = Inventory()
     player_hud = Hud(player_inventory, item_database, Environment.ScreenWidth, Environment.ScreenHeight)
@@ -439,6 +446,17 @@ def main():
     for i in card_list['card']:
         card_index.append(Card(i['name'], i['type'], i['text'], pygame.image.load(i['image'])))
 
+    card_item_list = json.load(open("Image_Assets\\card_item_list.json"))
+    card_item_index = []
+
+    for i in card_item_list['item']:
+        temp_card_list = []
+        for j in i['card']:
+            for k in card_index:
+                if str(j) == str(k.name):
+                    temp_card_list.append(k)
+        card_item_index.append(Card_Item(pygame.image.load(i['image']), i['rarity'], i['value'], i['name'], temp_card_list))
+        del temp_card_list
 
 
 # This is creating a weapon, changing its attributes, giving it a combat option, and equiping it to the character.
@@ -497,6 +515,11 @@ def main():
     running = True
     dungeon = False
     card_test = False
+    new_game = False
+
+#  new game player initialization
+
+
 
 
 # \\\\\\\\This is the beginning of the while loop that is the entire game. This is where the magic happens./////////
@@ -536,6 +559,15 @@ def main():
                             tavern_menu.draw()
 
         if card_test:
+            for i in range(len(card_item_index)):
+                temp = ""
+                for j in card_item_index[i].card_list:
+                    temp += str(j.name)
+                    temp += ", "
+                menu_buffer.blit(font.render(str(card_item_index[i].name) + ": " +
+                                                 temp, 1, (255, 255, 255),
+                                                 (255, 0, 255)), (0, Environment.ScreenHeight/2 + i * font.get_height()))
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
