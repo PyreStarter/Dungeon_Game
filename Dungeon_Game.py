@@ -270,12 +270,15 @@ class Card_Player:
 
     def __init__(self):
         self.deck = Deck()
-        self.card_item_inventory = []
         self.skill = 0
         self.power = 0
         self.wit = 0
         self.points_left = 0
         self.starting_hand_size = 0
+        self.inventory = []
+
+    def add_item(self, item):
+        self.inventory.append(item)
 
 
 
@@ -486,6 +489,21 @@ def new_player_deck(player, card_index):
     return 0
 
 
+def new_player_inventory(player, items):
+    for i in items:
+        if i.name == "Dagger":
+            player.add_item(i)
+    for i in items:
+        if i.name == "Backpack":
+            player.add_item(i)
+    for i in items:
+        if i.name == "Leather Armor":
+            player.add_item(i)
+
+def add_inventory_cards(player):
+    for i in player.inventory:
+        for j in i.card_list:
+            player.deck.add_card(j)
 
 
 def confirmation(buffer, screen):
@@ -762,6 +780,8 @@ def main():
                                 menu_buffer.fill((255, 0, 255))
                                 tavern_menu.draw()
                                 new_player_deck(card_player, card_index)
+                                new_player_inventory(card_player, card_item_index)
+                                add_inventory_cards(card_player)
                             else:
                                 card_player.power = 0
                                 card_player.skill = 0
@@ -900,7 +920,7 @@ def main():
                             dungeon = False
                             inventorymenu = True
                             temp_items = []
-                            for i in card_item_index:
+                            for i in card_player.inventory:
                                 temp_items.append(i.name)
                             inventory_menu = menu.Menu()
                             inventory_menu.init(temp_items, menu_buffer)
@@ -941,6 +961,12 @@ def main():
                         for i in card_index:
                             if i.name == decklist_menu.options[decklist_menu.index].text.split("x ", 1)[1]:
                                 menu_buffer.blit(i.surface, (int(Environment.ScreenWidth * .5), 20))
+                    if event.key == pygame.K_h:
+                        active_cards = []
+                        hand = random.sample(card_player.deck.list, 5)
+                        for i in range(len(hand)):
+                            active_cards.append(Card_Object(hand[i], int(Environment.ScreenWidth/len(hand)), int(Environment.ScreenWidth/len(hand)*1.4)))
+                            menu_buffer.blit(active_cards[i].surface, (active_cards[i].width * i, Environment.ScreenHeight - active_cards[i].height))
 
 
         if inventory:
