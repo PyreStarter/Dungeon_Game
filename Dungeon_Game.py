@@ -612,7 +612,7 @@ def main():
 # creating the menus
 
     opening_menu = menu.Menu()
-    opening_menu.init(['New Game', 'Card Test', 'Quit'], menu_buffer)
+    opening_menu.init(['New Game', 'Card Test', 'Inventory Test', 'Quit'], menu_buffer)
     opening = True
 
     opening_menu.draw()
@@ -630,6 +630,7 @@ def main():
     running = True
     dungeon = False
     card_test = False
+    inventorymenu = False
 
     new_attributes_menu = menu.Menu()
     new_attributes_menu.init(['+1 Power', '+1 Skill', '+1 Wit'], menu_buffer)
@@ -656,9 +657,26 @@ def main():
                         opening_menu.select_next()
                         opening_menu.draw()
                     if event.key == pygame.K_RETURN:
-                        if opening_menu.get_index() == 2:
+                        if opening_menu.get_index() == 3:
                             running = False
                             opening = False
+                        if opening_menu.get_index() == 2:
+                            opening = False
+                            inventory = True
+                            temp_items = []
+                            for i in card_item_index:
+                                temp_items.append(i.name)
+                            inventory_menu = menu.Menu()
+                            inventory_menu.init(temp_items, menu_buffer)
+                            menu_buffer.fill((0, 0, 0))
+                            inventory_menu.x = 0
+                            inventory_menu.y = 0
+                            inventory_menu.draw()
+                            for i in card_item_index:
+                                if i.name == inventory_menu.options[inventory_menu.index].text:
+                                    for j in range(i.card_list_length):
+                                        menu_buffer.blit(i.card_list[j].surface, (
+                                            int(Environment.ScreenWidth * .15) + j * i.card_list[j].width + 10, 20))
                         if opening_menu.get_index() == 1:
                             card_test = True
                             opening = False
@@ -880,7 +898,7 @@ def main():
                         if dungeon_menu.get_index() == 0:
                             dungeonmenu = False
                             dungeon = False
-                            inventory = True
+                            inventorymenu = True
                             temp_items = []
                             for i in card_item_index:
                                 temp_items.append(i.name)
@@ -934,8 +952,37 @@ def main():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         inventory = False
-                        dungeonmenu = True
+                        opening = True
+                        menu_buffer.fill((255, 0, 255))
+                        opening_menu.draw()
+                    if event.key == pygame.K_UP:
+                        menu_buffer.fill((0, 0, 0))
+                        inventory_menu.select_previous()
+                        inventory_menu.draw()
+                        for i in card_item_index:
+                            if i.name == inventory_menu.options[inventory_menu.index].text:
+                                for j in range(i.card_list_length):
+                                    menu_buffer.blit(i.card_list[j].surface, (int(Environment.ScreenWidth * .15) + j*i.card_list[j].width + 10, 20))
+                    if event.key == pygame.K_DOWN:
+                        menu_buffer.fill((0, 0, 0))
+                        inventory_menu.select_next()
+                        inventory_menu.draw()
+                        for i in card_item_index:
+                            if i.name == inventory_menu.options[inventory_menu.index].text:
+                                for j in range(i.card_list_length):
+                                    menu_buffer.blit(i.card_list[j].surface, (int(Environment.ScreenWidth * .15) + j*i.card_list[j].width + 10, 20))
+
+        if inventorymenu:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                    dungeon = False
+                    inventory = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        inventory = False
                         dungeon = True
+                        dungeonmenu = True
                         menu_buffer.fill((255, 0, 255))
                         dungeon_menu.draw()
                     if event.key == pygame.K_UP:
@@ -1029,7 +1076,7 @@ def main():
                                     menu_buffer.fill((255, 0, 255))
                                     screen_buffer_2.fill((255, 0, 255))
 
-        if dungeonmenu or tavern or opening or top_birb.running or card_test or inventory or new_attributes or decklistmenu:
+        if dungeonmenu or tavern or opening or top_birb.running or card_test or inventory or new_attributes or decklistmenu or inventorymenu:
             menu_boolean = True
         else:
             menu_boolean = False
