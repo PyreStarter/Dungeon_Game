@@ -23,6 +23,88 @@
 								"Parry",
 								"Stab"
 							]
+				},
+				
+				{
+				"name": "Greatsword",
+					"value": 1,
+					"rarity": 1,
+					"image": "Image_Assets\\Card_Example.png",
+					"card": [
+								"Cleave",
+								"Slash",
+								"Slash"
+							]
+				},
+				
+				{
+				"name": "Great Axe",
+					"value": 1,
+					"rarity": 1,
+					"image": "Image_Assets\\Card_Example.png",
+					"card": [
+								"Crush", 
+								"Crush",
+								"Cleave"
+							]
+				},
+				
+				{
+				"name": "Shield",
+					"value": 1,
+					"rarity": 1,
+					"image": "Image_Assets\\Card_Example.png",
+					"card": [
+								"Defend", 
+								"Defend",
+								"Defend"
+							]
+				},
+				
+				{
+				"name": "Leather Armor",
+					"value": 1,
+					"rarity": 1,
+					"image": "Image_Assets\\Card_Example.png",
+					"card": [
+								"Protect", 
+								"Dodge",
+								"Defend"
+							]
+				},
+				
+				{
+				"name": "Backpack",
+					"value": 1,
+					"rarity": 1,
+					"image": "Image_Assets\\Card_Example.png",
+					"card": [
+								"Rummage", 
+								"Rummage",
+								"Search"
+							]
+				},
+				
+				{
+				"name": "Belt Pouch",
+					"value": 1,
+					"rarity": 1,
+					"image": "Image_Assets\\Card_Example.png",
+					"card": [
+								"Search"
+							]
+				},
+				
+				{
+				"name": "Warhammer",
+					"value": 1,
+					"rarity": 1,
+					"image": "Image_Assets\\Card_Example.png",
+					"card": [
+								"Crush", 
+								"Crush",
+								"Crush"
+							]
 				}
 
 				
