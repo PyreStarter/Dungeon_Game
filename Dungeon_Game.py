@@ -266,6 +266,19 @@ class Player:
             self.frame = 0
 
 
+class Card_Player:
+
+    def __init__(self):
+        self.deck = Deck()
+        self.card_item_inventory = []
+        self.skill = 0
+        self.power = 0
+        self.wit = 0
+        self.points_left = 0
+        self.starting_hand_size = 0
+
+
+
 # Background class. This will be used for the scrolling backdrops in the dungeon.
 class Background:
 
@@ -403,6 +416,106 @@ def chance_outcome(chance):
         return False
 
 
+def new_player_deck(player, card_index):
+    player.deck = Deck()
+    for i in card_index:
+        if i.name == "Fumble":
+            if player.skill < 2:
+                player.deck.add_card(i)
+                if player.skill < 1:
+                    player.deck.add_card(i)
+                    player.deck.add_card(i)
+    for i in card_index:
+        if i.name == "Quick":
+            if player.skill > 2:
+                player.deck.add_card(i)
+                if player.skill > 3:
+                    player.deck.add_card(i)
+                    if player.skill > 4:
+                        player.deck.add_card(i)
+    for i in card_index:
+        if i.name == "Dodge":
+            if player.skill > 1:
+                player.deck.add_card(i)
+                if player.skill > 3:
+                    player.deck.add_card(i)
+                    if player.skill > 3:
+                        player.deck.add_card(i)
+    for i in card_index:
+        if i.name == "Untouchable":
+            if player.skill > 4:
+                player.deck.add_card(i)
+    for i in card_index:
+        if i.name == "Strike":
+            if player.power > 0:
+                player.deck.add_card(i)
+                if player.power > 1:
+                    player.deck.add_card(i)
+                    player.deck.add_card(i)
+    for i in card_index:
+        if i.name == "Great Strength":
+            if player.power > 2:
+                player.deck.add_card(i)
+                if player.power > 3:
+                    player.deck.add_card(i)
+                    player.deck.add_card(i)
+    for i in card_index:
+        if i.name == "Monstrous Strength":
+            if player.power > 4:
+                player.deck.add_card(i)
+    for i in card_index:
+        if i.name == "Initiative":
+            if player.wit > 3:
+                player.deck.add_card(i)
+    for i in card_index:
+        if i.name == "Caution":
+            if player.wit > 3:
+                player.deck.add_card(i)
+    for i in card_index:
+        if i.name == "Quick Thinking":
+            if player.wit > 4:
+                player.deck.add_card(i)
+    if player.wit == 0:
+        player.starting_hand_size = 3
+    elif player.wit == 1:
+        player.starting_hand_size = 4
+    elif player.wit == 2:
+        player.starting_hand_size = 5
+    elif player.wit > 2:
+        player.starting_hand_size = 6
+    return 0
+
+
+
+
+def confirmation(buffer, screen):
+    buffer.set_colorkey((255, 0, 255))
+    screen.set_colorkey((255, 0, 255))
+    confirmation_menu = menu.Menu()
+    confirmation_menu.init(['No', 'Yes'], buffer)
+    confirmation = True
+    confirmation_menu.draw()
+    while confirmation:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return 0
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return 0
+                if event.key == pygame.K_UP:
+                    confirmation_menu.select_previous()
+                    confirmation_menu.draw()
+                if event.key == pygame.K_DOWN:
+                    confirmation_menu.select_next()
+                    confirmation_menu.draw()
+                if event.key == pygame.K_RETURN:
+                    return confirmation_menu.get_index()
+        screen.blit(buffer, (0, 0))
+        pygame.display.flip()
+    return 0
+
+
+
 # MAIN FUNCTION LES GOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 def main():
 
@@ -428,7 +541,7 @@ def main():
     dungeon_background = Background()
     player = Player()
     item_database = Database()
-    player_deck = Deck()
+    card_player = Card_Player()
 
     player_inventory = Inventory()
     player_hud = Hud(player_inventory, item_database, Environment.ScreenWidth, Environment.ScreenHeight)
@@ -509,18 +622,18 @@ def main():
     tavern = False
 
     dungeon_menu = menu.Menu()
-    dungeon_menu.init(['Inventory', 'Character', 'Stop', 'Turn Around', 'Save & Quit'], menu_buffer)
+    dungeon_menu.init(['Inventory', 'Decklist', 'Stop', 'Turn Around', 'Save & Quit'], menu_buffer)
     dungeonmenu = False
 
+    decklistmenu = False
     inventory = False
     running = True
     dungeon = False
     card_test = False
-    new_game = False
 
-#  new game player initialization
-
-
+    new_attributes_menu = menu.Menu()
+    new_attributes_menu.init(['+1 Power', '+1 Skill', '+1 Wit'], menu_buffer)
+    new_attributes = False
 
 
 # \\\\\\\\This is the beginning of the while loop that is the entire game. This is where the magic happens./////////
@@ -554,10 +667,101 @@ def main():
                             menu_buffer.blit(card_index[t].surface, (int(Environment.ScreenWidth * .5), 20))
                             test_deck = Deck()
                         if opening_menu.get_index() == 0:
-                            tavern = True
+                            new_attributes = True
                             opening = False
+                            card_player.power = 0
+                            card_player.skill = 0
+                            card_player.wit = 0
+                            card_player.points_left = 5
                             menu_buffer.fill((255, 0, 255))
-                            tavern_menu.draw()
+                            decklist_buffer.fill((255, 0, 255))
+                            decklist_buffer.blit(font.render("Power: " + str(card_player.power), 1, (255, 255, 255),
+                                                             (255, 0, 255)), (0, 0 * font.get_height()))
+                            decklist_buffer.blit(font.render("Skill: " + str(card_player.skill), 1, (255, 255, 255),
+                                                             (255, 0, 255)), (0, 1 * font.get_height()))
+                            decklist_buffer.blit(font.render("Wit: " + str(card_player.wit), 1, (255, 255, 255),
+                                                             (255, 0, 255)), (0, 2 * font.get_height()))
+                            decklist_buffer.blit(font.render("Points left: " + str(card_player.points_left), 1,
+                                                             (255, 255, 255),(255, 0, 255)), (0, 3 * font.get_height()))
+                            menu_buffer.blit(decklist_buffer, (0, 0))
+                            new_attributes_menu.draw()
+
+        if new_attributes:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                    new_attributes = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        new_attributes = False
+                        opening = True
+                    if event.key == pygame.K_UP:
+                        new_attributes_menu.select_previous()
+                        new_attributes_menu.draw()
+                    if event.key == pygame.K_DOWN:
+                        new_attributes_menu.select_next()
+                        new_attributes_menu.draw()
+                    if event.key == pygame.K_RETURN:
+                        if new_attributes_menu.get_index() == 2:
+                            card_player.wit += 1
+                            card_player.points_left -= 1
+                        if new_attributes_menu.get_index() == 1:
+                            card_player.skill += 1
+                            card_player.points_left -= 1
+                        if new_attributes_menu.get_index() == 0:
+                            card_player.power += 1
+                            card_player.points_left -= 1
+                        decklist_buffer.fill((255, 0, 255))
+                        decklist_buffer.blit(font.render("Power: " + str(card_player.power), 1, (255, 255, 255),
+                                                             (255, 0, 255)), (0, 0 * font.get_height()))
+                        decklist_buffer.blit(font.render("Skill: " + str(card_player.skill), 1, (255, 255, 255),
+                                                         (255, 0, 255)), (0, 1 * font.get_height()))
+                        decklist_buffer.blit(font.render("Wit: " + str(card_player.wit), 1, (255, 255, 255),
+                                                         (255, 0, 255)), (0, 2 * font.get_height()))
+                        decklist_buffer.blit(font.render("Points left: " + str(card_player.points_left), 1, (255, 255, 255),
+                                                         (255, 0, 255)), (0, 3 * font.get_height()))
+                        menu_buffer.blit(decklist_buffer, (0, 0))
+                        new_attributes_menu.draw()
+                        if card_player.points_left == 0:
+                            menu_buffer.fill((0, 0, 0))
+                            decklist_buffer.blit(font.render("Power: " + str(card_player.power), 1, (255, 255, 255),
+                                                             (0, 0, 0)), (0, 0 * font.get_height()))
+                            decklist_buffer.blit(font.render("Skill: " + str(card_player.skill), 1, (255, 255, 255),
+                                                             (0, 0, 0)), (0, 1 * font.get_height()))
+                            decklist_buffer.blit(font.render("Wit: " + str(card_player.wit), 1, (255, 255, 255),
+                                                             (0, 0, 0)), (0, 2 * font.get_height()))
+                            decklist_buffer.blit(
+                                font.render("Points left: " + str(card_player.points_left), 1, (255, 255, 255),
+                                            (0, 0, 0)), (0, 3 * font.get_height()))
+                            decklist_buffer.blit(
+                                font.render("Confirm stat allocation?", 1, (255, 255, 255),
+                                            (0, 0, 0)), (0, 4 * font.get_height()))
+                            menu_buffer.blit(decklist_buffer, (0, 0))
+                            c = confirmation(menu_buffer, screen)
+                            if c:
+                                new_attributes = False
+                                tavern = True
+                                menu_buffer.fill((255, 0, 255))
+                                tavern_menu.draw()
+                                new_player_deck(card_player, card_index)
+                            else:
+                                card_player.power = 0
+                                card_player.skill = 0
+                                card_player.wit = 0
+                                card_player.points_left = 5
+                                menu_buffer.fill((255, 0, 255))
+                                decklist_buffer.fill((255, 0, 255))
+                                decklist_buffer.blit(font.render("Power: " + str(card_player.power), 1, (255, 255, 255),
+                                                                 (255, 0, 255)), (0, 0 * font.get_height()))
+                                decklist_buffer.blit(font.render("Skill: " + str(card_player.skill), 1, (255, 255, 255),
+                                                                 (255, 0, 255)), (0, 1 * font.get_height()))
+                                decklist_buffer.blit(font.render("Wit: " + str(card_player.wit), 1, (255, 255, 255),
+                                                                 (255, 0, 255)), (0, 2 * font.get_height()))
+                                decklist_buffer.blit(font.render("Points left: " + str(card_player.points_left), 1,
+                                                                 (255, 255, 255), (255, 0, 255)),
+                                                     (0, 3 * font.get_height()))
+                                menu_buffer.blit(decklist_buffer, (0, 0))
+                                new_attributes_menu.draw()
 
         if card_test:
             for event in pygame.event.get():
@@ -657,6 +861,22 @@ def main():
                             dungeon = False
                             dungeonmenu = False
                             running = False
+                        if dungeon_menu.get_index() == 1:
+                            dungeon = False
+                            dungeonmenu = False
+                            decklistmenu = True
+                            temp_list = []
+                            for i in card_player.deck.get_decklist():
+                                temp_list.append(str(i[1]) + "x " + i[0])
+                            decklist_menu = menu.Menu()
+                            decklist_menu.init(temp_list, menu_buffer)
+                            menu_buffer.fill((0, 0, 0))
+                            decklist_menu.x = 0
+                            decklist_menu.y = 0
+                            decklist_menu.draw()
+                            for i in card_index:
+                                if i.name == decklist_menu.options[decklist_menu.index].text.split("x ", 1)[1]:
+                                    menu_buffer.blit(i.surface, (int(Environment.ScreenWidth * .5), 20))
                         if dungeon_menu.get_index() == 0:
                             dungeonmenu = False
                             dungeon = False
@@ -674,7 +894,36 @@ def main():
                                 if i.name == inventory_menu.options[inventory_menu.index].text:
                                     for j in range(i.card_list_length):
                                         menu_buffer.blit(i.card_list[j].surface, (
-                                        int(Environment.ScreenWidth * .15) + j * i.card_list[j].width + 10, 20))
+                                            int(Environment.ScreenWidth * .15) + j * i.card_list[j].width + 10, 20))
+
+        if decklistmenu:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                    dungeon = False
+                    decklistmenu = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        decklistmenu = False
+                        dungeonmenu = True
+                        dungeon = True
+                        menu_buffer.fill((255, 0, 255))
+                        dungeon_menu.draw()
+                    if event.key == pygame.K_UP:
+                        menu_buffer.fill((0, 0, 0))
+                        decklist_menu.select_previous()
+                        decklist_menu.draw()
+                        for i in card_index:
+                            if i.name == decklist_menu.options[decklist_menu.index].text.split("x ", 1)[1]:
+                                menu_buffer.blit(i.surface, (int(Environment.ScreenWidth * .5), 20))
+                    if event.key == pygame.K_DOWN:
+                        menu_buffer.fill((0, 0, 0))
+                        decklist_menu.select_next()
+                        decklist_menu.draw()
+                        for i in card_index:
+                            if i.name == decklist_menu.options[decklist_menu.index].text.split("x ", 1)[1]:
+                                menu_buffer.blit(i.surface, (int(Environment.ScreenWidth * .5), 20))
+
 
         if inventory:
             for event in pygame.event.get():
@@ -780,7 +1029,7 @@ def main():
                                     menu_buffer.fill((255, 0, 255))
                                     screen_buffer_2.fill((255, 0, 255))
 
-        if dungeonmenu or tavern or opening or top_birb.running or card_test or inventory:
+        if dungeonmenu or tavern or opening or top_birb.running or card_test or inventory or new_attributes or decklistmenu:
             menu_boolean = True
         else:
             menu_boolean = False

@@ -7,6 +7,13 @@
 					"text": "+1 Card_+1 Action_+1 Reaction",
 					"image": "Image_Assets\\Card_Example.png"
 				},
+				
+				{
+				"name": "Quick Thinking",
+					"type": "Action",
+					"text": "+3 Cards_+1 Action",
+					"image": "Image_Assets\\Card_Example.png"
+				},
 
 				{
 				"name": "Slash",
@@ -19,6 +26,20 @@
 				"name": "Strike",
 					"type": "Passive",
 					"text": "Passive:_+1 Damage",
+					"image": "Image_Assets\\Card_Example.png"
+				},
+				
+				{
+				"name": "Great Strength",
+					"type": "Passive",
+					"text": "Passive:_+2 Damage",
+					"image": "Image_Assets\\Card_Example.png"
+				},
+				
+				{
+				"name": "Monstrous Strength",
+					"type": "Passive",
+					"text": "Passive:_+4 Damage",
 					"image": "Image_Assets\\Card_Example.png"
 				},
 			
@@ -187,6 +208,13 @@
 				"name": "Concussion",
 					"type": "Injury",
 					"text": "Passive:_When drawn, discard_another random card",
+					"image": "Image_Assets\\Card_Example.png"
+				},
+				
+				{
+				"name": "Fumble",
+					"type": "Passive",
+					"text": "lel get rekt",
 					"image": "Image_Assets\\Card_Example.png"
 				}
 
