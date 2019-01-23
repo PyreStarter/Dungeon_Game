@@ -1,3 +1,4 @@
+from deck import Deck
 import pygame
 
 # Player class
@@ -24,3 +25,18 @@ class Player:
             self.speed_counter = 0
         if self.frame == 4:
             self.frame = 0
+
+
+class CardPlayer:
+
+    def __init__(self):
+        self.deck = Deck()
+        self.skill = 0
+        self.power = 0
+        self.wit = 0
+        self.points_left = 5
+        self.starting_hand_size = 0
+        self.inventory = []
+
+    def add_item(self, item):
+        self.inventory.append(item)

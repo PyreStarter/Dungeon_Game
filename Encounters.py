@@ -1,12 +1,11 @@
-import menu
-import pygame
+from menu import Menu
 from environment import Environment
+import pygame
 
 # Every encounter (i.e. combat scenario, puzzle, riddle, trap, etc.) will be of this class.
 class Encounter:
     def __init__(self, image):
-        self.menu = menu.Menu()
-        self.menu.menu_width = Environment.ScreenWidth
+        #self.menu.menu_width = Environment.ScreenWidth
         self.image = image
         self.options = []
 
@@ -30,9 +29,10 @@ class CombatEncounter(Encounter):
         self.buffer.blit(self.health_image, (18, 32))
         self.health_image.fill((255, 0, 255))
 
+
     def initialize_menu(self):
         if len(self.options) >= 4:
-            self.menu.init([str(self.options[0].name) + ' - ' + str(self.options[0].text),
+            self.menu = Menu([str(self.options[0].name) + ' - ' + str(self.options[0].text),
                             str(self.options[1].name) + ' - ' + str(self.options[1].text),
                             str(self.options[2].name) + ' - ' + str(self.options[2].text),
                             str(self.options[3].name) + ' - ' + str(self.options[3].text),
@@ -40,20 +40,20 @@ class CombatEncounter(Encounter):
                            self.buffer, width=Environment.ScreenWidth
                            )
         elif len(self.options) == 3:
-            self.menu.init([str(self.options[0].name) + ' - ' + str(self.options[0].text),
+            self.menu = Menu([str(self.options[0].name) + ' - ' + str(self.options[0].text),
                             str(self.options[1].name) + ' - ' + str(self.options[1].text),
                             str(self.options[2].name) + ' - ' + str(self.options[2].text),
                             'Run Away'],
                            self.buffer, width=Environment.ScreenWidth
                            )
         elif len(self.options) == 2:
-            self.menu.init([str(self.options[0].name) + ' - ' + str(self.options[0].text),
+            self.menu = Menu([str(self.options[0].name) + ' - ' + str(self.options[0].text),
                             str(self.options[1].name) + ' - ' + str(self.options[1].text),
                             'Run Away'],
                            self.buffer, width=Environment.ScreenWidth
                            )
         elif len(self.options) == 1:
-            self.menu.init([str(self.options[0].name) + ' - ' + str(self.options[0].text),
+            self.menu = Menu([str(self.options[0].name) + ' - ' + str(self.options[0].text),
                             'Run Away'],
                            self.buffer, width=Environment.ScreenWidth
                            )

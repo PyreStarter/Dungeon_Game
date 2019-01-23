@@ -6,10 +6,11 @@ from environment import Environment
 from hud import Hud
 from inventory import Inventory
 from item import Weapon, Torch
-from player import Player
+from menu import Menu
+from menu_manager import MenuManager
+from player import Player, CardPlayer
 import pygame
 import random
-import menu
 import json
 
 pygame.font.init()
@@ -23,22 +24,6 @@ class Option:
         self.chosen = False
         self.damage = damage
         self.chance = chance
-
-
-class Card_Player:
-
-    def __init__(self):
-        self.deck = Deck()
-        self.skill = 0
-        self.power = 0
-        self.wit = 0
-        self.points_left = 0
-        self.starting_hand_size = 0
-        self.inventory = []
-
-    def add_item(self, item):
-        self.inventory.append(item)
-
 
 
 # Background class. This will be used for the scrolling backdrops in the dungeon.
@@ -72,84 +57,64 @@ def chance_outcome(chance):
 
 def new_player_deck(player, card_list):
     player.deck = Deck()
-    for i in card_list:
-        if i.name == "Fumble":
-            if player.skill < 2:
-                player.deck.add_card(i)
-                if player.skill < 1:
-                    player.deck.add_card(i)
-                    player.deck.add_card(i)
-    for i in card_list:
-        if i.name == "Quick":
-            if player.skill > 2:
-                player.deck.add_card(i)
-                if player.skill > 3:
-                    player.deck.add_card(i)
-                    if player.skill > 4:
-                        player.deck.add_card(i)
-    for i in card_list:
-        if i.name == "Dodge":
-            if player.skill > 1:
-                player.deck.add_card(i)
-                if player.skill > 3:
-                    player.deck.add_card(i)
-                    if player.skill > 3:
-                        player.deck.add_card(i)
-    for i in card_list:
-        if i.name == "Untouchable":
-            if player.skill > 4:
-                player.deck.add_card(i)
-    for i in card_list:
-        if i.name == "Strike":
-            if player.power > 0:
-                player.deck.add_card(i)
-                if player.power > 1:
-                    player.deck.add_card(i)
-                    player.deck.add_card(i)
-    for i in card_list:
-        if i.name == "Great Strength":
-            if player.power > 2:
-                player.deck.add_card(i)
-                if player.power > 3:
-                    player.deck.add_card(i)
-                    player.deck.add_card(i)
-    for i in card_list:
-        if i.name == "Monstrous Strength":
-            if player.power > 4:
-                player.deck.add_card(i)
-    for i in card_list:
-        if i.name == "Initiative":
-            if player.wit > 3:
-                player.deck.add_card(i)
-    for i in card_list:
-        if i.name == "Caution":
-            if player.wit > 3:
-                player.deck.add_card(i)
-    for i in card_list:
-        if i.name == "Quick Thinking":
-            if player.wit > 4:
-                player.deck.add_card(i)
+
+    # Add cards based on the skill stat.
+    if player.skill == 0:
+        player.deck.add_card(card=card_list["Fumble"], count=3)
+    elif player.skill == 1:
+        player.deck.add_card(card=card_list["Fumble"])
+    elif player.skill == 2:
+        player.deck.add_card(card=card_list["Dodge"])
+    elif player.skill == 3:
+        player.deck.add_card(card=card_list["Quick"])
+        player.deck.add_card(card=card_list["Dodge"])
+    elif player.skill == 4:
+        player.deck.add_card(card=card_list["Quick"], count=2)
+        player.deck.add_card(card=card_list["Dodge"], count=2)
+    elif player.skill == 5:
+        player.deck.add_card(card=card_list["Quick"], count=3)
+        player.deck.add_card(card=card_list["Dodge"], count=3)
+        player.deck.add_card(card=card_list["Untouchable"])
+
+    # Add cards based on the power stat.
+    if player.power == 1:
+        player.deck.add_card(card=card_list["Strike"])
+    elif player.power == 2:
+        player.deck.add_card(card=card_list["Strike"], count=3)
+    elif player.power == 3:
+        player.deck.add_card(card=card_list["Strike"], count=3)
+        player.deck.add_card(card=card_list["Great Strength"])
+    elif player.power == 4:
+        player.deck.add_card(card=card_list["Strike"], count=3)
+        player.deck.add_card(card=card_list["Great Strength"], count=3)
+    elif player.power == 5:
+        player.deck.add_card(card=card_list["Strike"], count=3)
+        player.deck.add_card(card=card_list["Great Strength"], count=3)
+        player.deck.add_card(card=card_list["Monstrous Strength"])
+
+    # Add cards and adjust starting hand size based on the wit stat.
     if player.wit == 0:
         player.starting_hand_size = 3
     elif player.wit == 1:
         player.starting_hand_size = 4
     elif player.wit == 2:
         player.starting_hand_size = 5
-    elif player.wit > 2:
+    elif player.wit == 3:
         player.starting_hand_size = 6
-    return 0
-
+    elif player.wit == 4:
+        player.starting_hand_size = 6
+        player.deck.add_card(card=card_list["Initiative"])
+        player.deck.add_card(card=card_list["Caution"])
+    elif player.wit == 5:
+        player.starting_hand_size = 6
+        player.deck.add_card(card=card_list["Initiative"])
+        player.deck.add_card(card=card_list["Caution"])
+        player.deck.add_card(card=card_list["Quick Thinking"])
 
 def new_player_inventory(player, items):
-    for i in items:
-        if i.name == "Dagger":
-            player.add_item(i)
-    for i in items:
-        if i.name == "Backpack":
-            player.add_item(i)
-    for i in items:
-        if i.name == "Leather Armor":
-            player.add_item(i)
+    player.add_item(items["Dagger"])
+    player.add_item(items["Backpack"])
+    player.add_item(items["Leather Armor"])
 
 def add_inventory_cards(player):
     for i in player.inventory:
@@ -160,8 +125,7 @@ def add_inventory_cards(player):
 def confirmation(buffer, screen):
     buffer.set_colorkey((255, 0, 255))
     screen.set_colorkey((255, 0, 255))
-    confirmation_menu = menu.Menu()
-    confirmation_menu.init(['No', 'Yes'], buffer)
+    confirmation_menu = Menu(['No', 'Yes'], buffer)
     confirmation = True
     confirmation_menu.draw()
     while confirmation:
@@ -210,7 +174,7 @@ def main():
     dungeon_background = Background()
     player = Player()
     item_database = Database()
-    card_player = Card_Player()
+    card_player = CardPlayer()
 
     player_inventory = Inventory()
     player_hud = Hud(inventory=player_inventory, database=item_database, width=Environment.ScreenWidth, height=Environment.ScreenHeight, font=font)
@@ -271,42 +235,22 @@ def main():
     top_birb.initialize_menu()
 
 # creating the menus
-
-    opening_menu = menu.Menu()
-    opening_menu.init(['New Game', 'Card Test', 'Inventory Test', 'Quit'], menu_buffer)
-    opening = True
-
-    opening_menu.draw()
-
-    tavern_menu = menu.Menu()
-    tavern_menu.init(['Enter Dungeon', 'Inventory', 'Quit'], menu_buffer)
-    tavern = False
-
-    dungeon_menu = menu.Menu()
-    dungeon_menu.init(['Inventory', 'Decklist', 'Stop', 'Turn Around', 'Save & Quit'], menu_buffer)
-    dungeonmenu = False
-
-    decklistmenu = False
-    inventory = False
-    running = True
-    dungeon = False
-    card_test = False
-    inventorymenu = False
-
-    new_attributes_menu = menu.Menu()
-    new_attributes_menu.init(['+1 Power', '+1 Skill', '+1 Wit'], menu_buffer)
-    new_attributes = False
-
+    menu_manager = MenuManager(menu_buffer, card_player)
 
 # \\\\\\\\This is the beginning of the while loop that is the entire game. This is where the magic happens./////////
 
-    while running:
+    while True:
 
-        if opening:
+        menu_manager.draw()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+            if event.type == pygame.KEYDOWN:
+                menu_manager.handle_key(event.key)
+
+        '''if opening:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                    opening = False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         running = False
@@ -327,7 +271,7 @@ def main():
                             temp_items = []
                             for i in card_item_list:
                                 temp_items.append(i.name)
-                            inventory_menu = menu.Menu()
+                            inventory_menu = Menu()
                             inventory_menu.init(temp_items, menu_buffer)
                             menu_buffer.fill((0, 0, 0))
                             inventory_menu.x = 0
@@ -367,9 +311,6 @@ def main():
 
         if new_attributes:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                    new_attributes = False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         new_attributes = False
@@ -446,9 +387,6 @@ def main():
 
         if card_test:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                    card_test = False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         card_test = False
@@ -488,12 +426,8 @@ def main():
                             active_cards.append(CardObject(hand[i], int(Environment.ScreenWidth/len(hand)), int(Environment.ScreenWidth/len(hand)*1.4)))
                             menu_buffer.blit(active_cards[i].surface, (active_cards[i].width * i, Environment.ScreenHeight - active_cards[i].height))
 
-
         if tavern:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                    tavern = False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         tavern = False
@@ -519,10 +453,6 @@ def main():
 
         if dungeonmenu:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                    dungeon = False
-                    dungeonmenu = False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_t:
                         player_inventory.add_item(torch)
@@ -549,7 +479,7 @@ def main():
                             temp_list = []
                             for i in card_player.deck.get_decklist():
                                 temp_list.append(str(i[1]) + "x " + i[0])
-                            decklist_menu = menu.Menu()
+                            decklist_menu = Menu()
                             decklist_menu.init(temp_list, menu_buffer)
                             menu_buffer.fill((0, 0, 0))
                             decklist_menu.x = 0
@@ -565,7 +495,7 @@ def main():
                             temp_items = []
                             for i in card_player.inventory:
                                 temp_items.append(i.name)
-                            inventory_menu = menu.Menu()
+                            inventory_menu = Menu()
                             inventory_menu.init(temp_items, menu_buffer)
                             menu_buffer.fill((0, 0, 0))
                             inventory_menu.x = 0
@@ -579,10 +509,6 @@ def main():
 
         if decklistmenu:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                    dungeon = False
-                    decklistmenu = False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         decklistmenu = False
@@ -611,13 +537,8 @@ def main():
                             active_cards.append(CardObject(hand[i], int(Environment.ScreenWidth/len(hand)), int(Environment.ScreenWidth/len(hand)*1.4)))
                             menu_buffer.blit(active_cards[i].surface, (active_cards[i].width * i, Environment.ScreenHeight - active_cards[i].height))
 
-
         if inventory:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                    dungeon = False
-                    inventory = False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         inventory = False
@@ -643,10 +564,6 @@ def main():
 
         if inventorymenu:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                    dungeon = False
-                    inventory = False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         inventory = False
@@ -671,12 +588,8 @@ def main():
                                 for j in range(i.card_list_length):
                                     menu_buffer.blit(i.card_list[j].surface, (int(Environment.ScreenWidth * .15) + j*i.card_list[j].width + 10, 20))
 
-
         if dungeon:
             for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                    dungeon = False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         dungeonmenu = True
@@ -748,14 +661,14 @@ def main():
         if dungeonmenu or tavern or opening or top_birb.running or card_test or inventory or new_attributes or decklistmenu or inventorymenu:
             menu_boolean = True
         else:
-            menu_boolean = False
+            menu_boolean = False'''
 
         screen.blit(screen_buffer_1, (0, 0))
         screen.blit(screen_buffer_2, (0, 0))
-        if dungeon:
-            screen.blit(player_hud.surface, (0, 0))
-        if menu_boolean:
-            screen.blit(menu_buffer, (0, 0))
+        #if dungeon:
+        screen.blit(player_hud.surface, (0, 0))
+        #if menu_boolean:
+        screen.blit(menu_buffer, (0, 0))
 
         pygame.display.flip()
         screen.fill((255, 0, 255))

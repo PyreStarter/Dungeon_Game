@@ -5,9 +5,10 @@ class Deck:
         self.length = 0
         self.list = []
 
-    def add_card(self, card):
-        self.length += 1
-        self.list.append(card)
+    def add_card(self, card, count=1):
+        self.length += count
+        for _ in range(count):
+            self.list.append(card)
 
     def remove_card(self, card):
         for i in self.list:

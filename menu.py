@@ -13,24 +13,28 @@ class MenuOption:
         self.surface = pygame.Surface
 
 class Menu:
-    def __init__(self):
+    def __init__(self, options, surface, width=0, height=0):
         self.options = []
-        self.index = 0
-        self.font = pygame.font.Font('Fonts/coders_crux.ttf', 32)
-        self.width = 0
-        self.height = 0
-        self.x = 0
-        self.y = 0
-        self.menu_widget = pygame.Surface
-        self.active = False
-
-    def init(self, options, surface, width=0, height=0):
-        self.surface = surface
-        self.width = width
-        self.height = height
         for item in options:
             self.options.append(MenuOption(item))
+        self.surface = surface
+        self.font = pygame.font.Font('Fonts/coders_crux.ttf', 32)
+        self.width = width
+        self.height = height
+        self.x = 0
+        self.y = 0
+        self.index = 0
+        self.menu_widget = pygame.Surface
+        self.active = False
         self.fill_menu_widget()
+
+    def open(self):
+        self.active = True
+        self.draw()
+
+    def close(self):
+        self.active = False
+        self.surface.fill((255, 0, 255))
 
     def fill_menu_widget(self):
         self.update_menu_options()
@@ -54,11 +58,11 @@ class Menu:
     def get_index(self):
         return self.index
 
-    def select_next(self):
+    def next(self):
         self.index = self.index + 1 if self.index < len(self.options) - 1 else 0
         self.update_menu_options()
 
-    def select_previous(self):
+    def previous(self):
         self.index = self.index - 1 if self.index > 0 else len(self.options) - 1
         self.update_menu_options()
 
@@ -73,3 +77,4 @@ class Menu:
             menu_widget.blit(self.options[i].surface, pygame.Rect(0, menu_item_height * i, self.width, menu_item_height))
 
         self.menu_widget = menu_widget
+        self.draw()
