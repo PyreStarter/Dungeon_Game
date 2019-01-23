@@ -1,5 +1,12 @@
-from Encounters import *
-from Environment import *
+from encounters import CombatEncounter
+from card import Card, CardObject, CardItem
+from database import Database
+from deck import Deck
+from environment import Environment
+from hud import Hud
+from inventory import Inventory
+from item import Weapon, Torch
+from player import Player
 import pygame
 import random
 import menu
@@ -7,184 +14,6 @@ import json
 
 pygame.font.init()
 font = pygame.font.Font('Fonts\\coders_crux.ttf', 64)
-
-
-# Every encounter (i.e. combat scenario, puzzle, riddle, trap, etc.) will be of this class.
-class Encounter:
-    def __init__(self, image):
-        self.menu = menu.Menu()
-        self.menu.menu_width = Environment.ScreenWidth
-        self.image = image
-        self.options = []
-
-    def add_option(self, option):
-        self.options.append(option)
-
-
-class Deck:
-    def __init__(self):
-        self.length = 0
-        self.list = []
-
-    def add_card(self, card):
-        self.length += 1
-        self.list.append(card)
-
-    def remove_card(self, card):
-        for i in self.list:
-            if i == card:
-                del i
-                return 1
-
-    def get_decklist(self):
-        decklist = []
-        tempdecklist = []
-        for i in self.list:
-            if i not in tempdecklist:
-                decklist.append([i.name, 1])
-                tempdecklist.append(i)
-            else:
-                for j in decklist:
-                    if i.name == j[0]:
-                        j[1] += 1
-        return decklist
-
-
-class Card_Object:
-    def __init__(self, card, width, height):
-        self.card = card
-        self.width = width
-        self.height = height
-        self.surface = pygame.Surface((self.width, self.height))
-        self.x_position = 0
-        self.x_position = 0
-        self.surface.blit(pygame.transform.scale(card.surface, (self.width, self.height)), (0, 0))
-
-
-# Card class. For the list of existing cards
-class Card:
-    def __init__(self, name, type, text, image):
-        self.image = image
-        self.name = name
-        self.text = text
-        self.type = type
-        self.width = int(Environment.ScreenWidth/4)
-        self.height = int(self.width*1.4)
-        self.surface = pygame.Surface((self.width, self.height))
-        self.textbox_color = (239, 228, 176)
-        self.name_buffer = self.name
-        #Adjusts the color of the card based on card type
-        if type == 'Action':
-            self.color = (255, 100, 100)
-            self.surface.fill(self.color)
-            pygame.draw.rect(self.surface, (100, 100, 100), (0, 0, self.width, self.height), 10)
-        elif type == 'Reaction':
-            self.color = (127, 255, 127)
-            self.surface.fill(self.color)
-            pygame.draw.rect(self.surface, (100, 100, 100), (0, 0, self.width, self.height), 10)
-        elif type == 'Passive':
-            self.color = (63, 127, 255)
-            self.surface.fill(self.color)
-            pygame.draw.rect(self.surface, (100, 100, 100), (0, 0, self.width, self.height), 10)
-        else:
-            self.color = (185, 122, 87)
-            self.surface.fill(self.color)
-            pygame.draw.rect(self.surface, (100, 100, 100), (0, 0, self.width, self.height), 10)
-        self.text_lines = text.split("_")
-        self.line_length = 0
-        #If a single line is too short, this appends spaces to the end to keep the scaling function from stretching it
-        for j in range(len(self.text_lines)):
-            if len(self.text_lines[j]) < 12:
-                self.diff = 12 - len(self.text_lines[j])
-                for i in range(self.diff):
-                    self.text_lines[j] += " "
-
-        if len(self.name_buffer) < 12:
-            self.diff = 12 - len(self.name)
-            for i in range(self.diff):
-                self.name_buffer += " "
-        #This finds the longest line and attributes it to the width of the text box
-        for i in self.text_lines:
-            j = font.render(i, 1, (255, 255, 255), (255, 0, 255, 0))
-            if j.get_width() > self.line_length:
-                self.line_length = j.get_width()
-        #If the text box is shorter than 3 lines, this sets the height to 3 lines to keep it from being stretched
-        if len(self.text_lines) >= 3:
-            self.line_height = len(self.text_lines)*font.get_height()
-        else:
-            self.line_height = 3*font.get_height()
-        self.namebox_text = font.render(self.name_buffer, 1, (0, 0, 0), self.textbox_color)
-        self.textbox_surface_0 = pygame.Surface((self.line_length, self.line_height))
-        self.textbox_surface_0.fill(self.textbox_color)
-        self.text_buffer = pygame.Surface((self.line_length, self.line_height))
-        self.text_buffer.fill(self.textbox_color)
-        for i in range(len(self.text_lines)):
-            self.text_buffer = font.render(self.text_lines[i], 1, (0, 0, 0), (self.textbox_color))
-            self.textbox_surface_0.blit(self.text_buffer, (1, i*font.get_height() +1))
-        self.textbox_surface = pygame.transform.scale(self.textbox_surface_0, (int(self.width*.8), int(self.height*.3)))
-        self.namebox_surface = pygame.Surface((int(self.width * .8), int(self.height * .1)))
-        self.namebox_surface.fill(self.textbox_color)
-        self.namebox_surface_0 = pygame.Surface((int(self.namebox_text.get_width()), int(self.namebox_surface.get_height())))
-        self.namebox_surface_0.fill(self.textbox_color)
-        self.namebox_surface_0.blit(self.namebox_text, (1, 1))
-        self.namebox_surface_0 = pygame.transform.scale(self.namebox_surface_0, (self.namebox_surface.get_width(),
-                                                                                 self.namebox_surface.get_height()))
-        self.namebox_surface.blit(self.namebox_surface_0, (0, 0))
-        self.image_surface = pygame.transform.scale(self.image, (int(self.width * .8), int(self.height * .4) - 10))
-        self.surface.blit(self.image_surface, (int(self.width * .1), int(self.height * .2) + 5))
-        self.surface.blit(self.textbox_surface, (int(self.width * .1), int(self.height * .6)))
-        self.surface.blit(self.namebox_surface, (int(self.width * .1), int(self.height * .1)))
-
-
-class Combat_Encounter(Encounter):
-    def __init__(self, image, menu_buffer, health):
-        Encounter.__init__(self, pygame.transform.scale(image, (Environment.ScreenWidth, Environment.ScreenHeight)))
-        self.buffer = menu_buffer
-        self.running = False
-        self.health = health
-        self.health_image = pygame.Surface((32, 32))
-        self.health_image.fill((255, 0, 255))
-
-    def set_health(self, health):
-        self.health = health
-        self.buffer.blit(self.health_image, (18, 32))
-        self.health_image = font.render("HP: " + str(self.health), 1, (255, 255, 255), (255, 0, 255, 0))
-        self.buffer.blit(self.health_image, (18, 32))
-        self.health_image.fill((255, 0, 255))
-
-    def initialize_menu(self):
-        if len(self.options) >= 4:
-            self.menu.init([str(self.options[0].name) + ' - ' + str(self.options[0].text),
-                            str(self.options[1].name) + ' - ' + str(self.options[1].text),
-                            str(self.options[2].name) + ' - ' + str(self.options[2].text),
-                            str(self.options[3].name) + ' - ' + str(self.options[3].text),
-                            'Run Away'],
-                           self.buffer, width=Environment.ScreenWidth
-                           )
-        elif len(self.options) == 3:
-            self.menu.init([str(self.options[0].name) + ' - ' + str(self.options[0].text),
-                            str(self.options[1].name) + ' - ' + str(self.options[1].text),
-                            str(self.options[2].name) + ' - ' + str(self.options[2].text),
-                            'Run Away'],
-                           self.buffer, width=Environment.ScreenWidth
-                           )
-        elif len(self.options) == 2:
-            self.menu.init([str(self.options[0].name) + ' - ' + str(self.options[0].text),
-                            str(self.options[1].name) + ' - ' + str(self.options[1].text),
-                            'Run Away'],
-                           self.buffer, width=Environment.ScreenWidth
-                           )
-        elif len(self.options) == 1:
-            self.menu.init([str(self.options[0].name) + ' - ' + str(self.options[0].text),
-                            'Run Away'],
-                           self.buffer, width=Environment.ScreenWidth
-                           )
-        else:
-            return 0
-        self.menu.x = 0
-        self.menu.y = Environment.ScreenHeight - self.menu.height
-
-
 
 # This class is for defining the unique options that will be provided by certain scenarios, items, and skills.
 class Option:
@@ -194,76 +23,6 @@ class Option:
         self.chosen = False
         self.damage = damage
         self.chance = chance
-
-
-# This is the item class. Each item should have it's own class that will inherit this base class.
-class Item:
-    def __init__(self, image, rarity, value, name):
-        self.image = image
-        self.rarity = rarity
-        self.value = value
-        self.Hud_Display = False
-        self.name = name
-
-    def use(self, quantity=1):
-        print('Item is not being used properly')
-
-
-class Card_Item(Item):
-    def __init__(self, image, rarity, value, name, cardlist):
-        Item.__init__(self, image, rarity, value, name)
-        self.card_list = cardlist
-        self.card_list_length = len(cardlist)
-
-
-# This is the weapon class. It is a subclass of Item. All weapons will be of this class.
-class Weapon(Item):
-    def __init__(self, image, rarity, value, name):
-        Item.__init__(self, image, rarity, value, name)
-        self.options = []
-        self.damage = 0
-        self.accuracy = 0
-
-    def add_option(self, option):
-        self.options.append(option)
-
-
-# Torch class
-class Torch(Item):
-    def __init__(self):
-        Item.__init__(self, pygame.image.load("Image_Assets\\torch.png"), 1, 5, 'torch')
-        self.Hud_Display = True
-
-    def use(self, hud, quantity=1):
-        hud.torch_count = 0
-        hud.torch_diminish = 0
-        return
-
-
-# Player class
-class Player:
-
-    def __init__(self):
-        self.strength = 1
-        self.dexterity = 1
-        self.awareness = 1
-        self.stealth = 1
-        self.health = 3
-        self.width = 32
-        self.height = 32
-        self.image = pygame.image.load("Image_Assets\\player.png")
-        self.surface = pygame.Surface((self.width, self.height))
-        self.frame = 0
-        self.speed_counter = 0
-
-    def move(self, speed=1):
-        self.surface.blit(self.image, (0, 0), (self.frame * 32, 0, 32, 32))
-        self.speed_counter += 1
-        if self.speed_counter == speed:
-            self.frame += 1
-            self.speed_counter = 0
-        if self.frame == 4:
-            self.frame = 0
 
 
 class Card_Player:
@@ -299,114 +58,6 @@ class Background:
         self.speed_counter += self.speed
         if self.speed_counter >= int(Environment.ScreenWidth/self.speed):
             self.speed_counter = 0
-
-
-# This class is a database for organizing items. This will be removed upon implementation of a better solution
-class Database:
-
-    def __init__(self):
-        self.item = []
-
-    def add_item(self, item):
-        self.item.append(item)
-
-    def get_item(self, name):
-        for i in self.item:
-            if i.name == name:
-                return i
-        print('error: could not find item')
-        return 0
-
-
-# Inventory class. For keeping track of who has what.
-class Inventory:
-
-    def __init__(self):
-        self.items = []
-        self.main_hand = Weapon(pygame.image.load("Image_Assets\\meter_1.png"), 0, 0, 0)
-        self.off_hand = Weapon(pygame.image.load("Image_Assets\\meter_1.png"), 0, 0, 0)
-
-    def add_item(self, item, quantity=1):
-        for i in self.items:
-            if i[0] == item.name:
-                i[1] += quantity
-                return
-        self.items.append([item.name, quantity])
-
-    def use_item(self, hud, item, quantity=1):
-        for i in self.items:
-            if i[0] == item.name:
-                if i[1] >= quantity:
-                    i[1] -= quantity
-                    item.use(hud, quantity)
-                else:
-                    print('Error: Not enough items to use')
-                return
-
-    def set_main_hand(self, item):
-        self.main_hand = item
-        return
-
-    def set_off_hand(self, item):
-        self.off_hand = item
-
-
-# Hud class, handles everything related to the HUD
-class Hud:
-
-    def __init__(self, inventory, database, width, height):
-        self.inventory = inventory
-        self.width = width
-        self.height = height
-        self.surface = pygame.Surface((width, height))
-        self.surface.fill((255, 0, 255))
-        self.surface.set_colorkey((255, 0, 255))
-        self.database = database
-        self.set_item_tracker()
-        self.torch_meter_image = pygame.image.load("Image_Assets\\meter_1.png")
-        self.torch_diminish = 0
-        self.torch_count = 0
-
-    def set_item_tracker(self):
-        count = 1
-        for i in self.inventory.items:
-            j = self.database.get_item(i[0])
-            if j.Hud_Display:
-                clear_space = pygame.Surface((96, 32))
-                clear_space.fill((255, 0, 255))
-                combined_image = pygame.Surface((76, 32))
-                quantity_image = font.render(str(i[1]), 1, (255, 255, 255), (255, 0, 255))
-                combined_image.blit(j.image, (0, 0))
-                combined_image.blit(quantity_image, (32, 0))
-                if i[1] <= 9:
-                    combined_image.blit(clear_space, (56, 0))
-                self.surface.blit(clear_space, ((self.width - (96*count)), 0))
-                self.surface.blit(combined_image, ((self.width - (96*count)), 0))
-                count += 1
-
-    def set_torch_meter(self):
-        torch = self.database.get_item('torch')
-        clear_space = pygame.Surface((128, 32))
-        clear_space.fill((255, 0, 255))
-        meter_surface = pygame.Surface((128, 32))
-        meter_surface.fill((255, 0, 255))
-        meter_surface.set_colorkey((255, 0, 255))
-        if self.torch_diminish < 128:
-            meter_surface.blit(self.torch_meter_image, (0, 0), (0, 0, (128 - self.torch_diminish), 32))
-        self.surface.blit(torch.image, (int(Environment.ScreenWidth/64), int(Environment.ScreenHeight/4)))
-        self.surface.blit(clear_space, (int(Environment.ScreenWidth/64)+32, int(Environment.ScreenHeight/4)))
-        self.surface.blit(meter_surface, (int(Environment.ScreenWidth/64)+32, int(Environment.ScreenHeight/4)))
-
-    def update_torch_meter(self, speed=1):
-        if self.torch_count >= speed:
-            self.torch_diminish += 1
-            self.torch_count = 0
-        self.torch_count += 1
-
-    def update(self, inventory):
-        self.inventory = inventory
-        self.set_item_tracker()
-        self.set_torch_meter()
 
 
 # This is a function that will take in a probability of success and return successful(True) or unsuccessful(False)
@@ -562,7 +213,7 @@ def main():
     card_player = Card_Player()
 
     player_inventory = Inventory()
-    player_hud = Hud(player_inventory, item_database, Environment.ScreenWidth, Environment.ScreenHeight)
+    player_hud = Hud(player_inventory, item_database, Environment.ScreenWidth, Environment.ScreenHeight, font)
 
     torch = Torch()
     item_database.add_item(torch)
@@ -575,7 +226,7 @@ def main():
     card_index = []
 
     for i in card_list['card']:
-        card_index.append(Card(i['name'], i['type'], i['text'], pygame.image.load(i['image'])))
+        card_index.append(Card(i['name'], i['type'], i['text'], pygame.image.load(i['image']), font))
 
     card_item_list = json.load(open("Image_Assets\\card_item_list.json"))
     card_item_index = []
@@ -586,7 +237,7 @@ def main():
             for k in card_index:
                 if str(j) == str(k.name):
                     temp_card_list.append(k)
-        card_item_index.append(Card_Item(pygame.image.load(i['image']), i['rarity'], i['value'], i['name'], temp_card_list))
+        card_item_index.append(CardItem(pygame.image.load(i['image']), i['rarity'], i['value'], i['name'], temp_card_list))
         del temp_card_list
 
 
@@ -620,7 +271,7 @@ def main():
 
 # This is creating the Top Birb encounter
 
-    top_birb = Combat_Encounter(pygame.image.load("Image_Assets\\Tokoyami.png"), menu_buffer, 10)
+    top_birb = CombatEncounter(pygame.image.load("Image_Assets\\Tokoyami.png"), font, menu_buffer, 10)
     if len(player_inventory.main_hand.options):
         top_birb.add_option(player_inventory.main_hand.options[0])
     if len(player_inventory.off_hand.options):
@@ -842,7 +493,7 @@ def main():
                         active_cards = []
                         hand = random.sample(test_deck.list, 5)
                         for i in range(len(hand)):
-                            active_cards.append(Card_Object(hand[i], int(Environment.ScreenWidth/len(hand)), int(Environment.ScreenWidth/len(hand)*1.4)))
+                            active_cards.append(CardObject(hand[i], int(Environment.ScreenWidth/len(hand)), int(Environment.ScreenWidth/len(hand)*1.4)))
                             menu_buffer.blit(active_cards[i].surface, (active_cards[i].width * i, Environment.ScreenHeight - active_cards[i].height))
 
 
@@ -965,7 +616,7 @@ def main():
                         active_cards = []
                         hand = random.sample(card_player.deck.list, 5)
                         for i in range(len(hand)):
-                            active_cards.append(Card_Object(hand[i], int(Environment.ScreenWidth/len(hand)), int(Environment.ScreenWidth/len(hand)*1.4)))
+                            active_cards.append(CardObject(hand[i], int(Environment.ScreenWidth/len(hand)), int(Environment.ScreenWidth/len(hand)*1.4)))
                             menu_buffer.blit(active_cards[i].surface, (active_cards[i].width * i, Environment.ScreenHeight - active_cards[i].height))
 
 
