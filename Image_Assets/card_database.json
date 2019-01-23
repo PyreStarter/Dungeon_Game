@@ -1,0 +1,289 @@
+{
+  "cards": [
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Quick",
+      "text": "+1 Card_+1 Action_+1 Reaction",
+      "type": "Action"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Quick Thinking",
+      "text": "+3 Cards_+1 Action",
+      "type": "Action"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Slash",
+      "text": "+2 Damage",
+      "type": "Action"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Strike",
+      "text": "Passive:_+1 Damage",
+      "type": "Passive"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Great Strength",
+      "text": "Passive:_+2 Damage",
+      "type": "Passive"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Monstrous Strength",
+      "text": "Passive:_+4 Damage",
+      "type": "Passive"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Stab",
+      "text": "+1 Damage_+1 Card",
+      "type": "Action"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Parry",
+      "text": "+1 Block_+1 Action",
+      "type": "Reaction"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Cleave",
+      "text": "+2 Damage_+1 Damage",
+      "type": "Action"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Crush",
+      "text": "+3 Damage",
+      "type": "Action"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Defend",
+      "text": "+2 Block",
+      "type": "Reaction"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Protect",
+      "text": "Passive:_+1 Block",
+      "type": "Passive"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Dodge",
+      "text": "Avoid an attack",
+      "type": "Reaction"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Untouchable",
+      "text": "Avoid an attack_Avoid an attack",
+      "type": "Reaction"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Initiative",
+      "text": "+1 Action",
+      "type": "Reaction"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Unrivaled Initiative",
+      "text": "+2 Actions",
+      "type": "Reaction"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Caution",
+      "text": "+1 Reaction",
+      "type": "Action"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Danger Sense",
+      "text": "+2 Reactions",
+      "type": "Action"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Fury",
+      "text": "+2 Actions",
+      "type": "Action"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Speed",
+      "text": "+2 Reactions",
+      "type": "Reaction"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Rummage",
+      "text": "Draw 1 random_item from your_pack",
+      "type": "Action"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Search",
+      "text": "Draw 1 of 3_random items_from your pack",
+      "type": "Action"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Sprained Foot",
+      "text": "Passive:_When drawn,_lose 1 reaction",
+      "type": "Injury"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Fractured Arm",
+      "text": "Passive:_When drawn,_lose 1 action",
+      "type": "Injury"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Cracked Rib",
+      "text": "Passive:_You can play only_1 card each turn",
+      "type": "Injury"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Bleeding",
+      "text": "Passive:_At end of turn,_shuffle into deck",
+      "type": "Injury"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Gashed Leg",
+      "text": "Passive:_When you play a_reaction, add a_bleeding",
+      "type": "Injury"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Sliced Hand",
+      "text": "Passive:_When you play an_action, add a_bleeding",
+      "type": "Injury"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Puncture Wound",
+      "text": "Passive:_When you draw 1_discard 1",
+      "type": "Injury"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Concussion",
+      "text": "Passive:_When drawn, discard_another random card",
+      "type": "Injury"
+    },
+    {
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Fumble",
+      "text": "lel get rekt",
+      "type": "Passive"
+    }
+  ],
+  "items": [
+    {
+      "card": [
+        "Quick",
+        "Stab",
+        "Stab"
+      ],
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Dagger",
+      "rarity": 1,
+      "value": 1
+    },
+    {
+      "card": [
+        "Quick",
+        "Parry",
+        "Stab"
+      ],
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Rapier",
+      "rarity": 1,
+      "value": 1
+    },
+    {
+      "card": [
+        "Cleave",
+        "Slash",
+        "Slash"
+      ],
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Greatsword",
+      "rarity": 1,
+      "value": 1
+    },
+    {
+      "card": [
+        "Crush",
+        "Crush",
+        "Cleave"
+      ],
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Great Axe",
+      "rarity": 1,
+      "value": 1
+    },
+    {
+      "card": [
+        "Defend",
+        "Defend",
+        "Defend"
+      ],
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Shield",
+      "rarity": 1,
+      "value": 1
+    },
+    {
+      "card": [
+        "Protect",
+        "Dodge",
+        "Defend"
+      ],
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Leather Armor",
+      "rarity": 1,
+      "value": 1
+    },
+    {
+      "card": [
+        "Rummage",
+        "Rummage",
+        "Search"
+      ],
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Backpack",
+      "rarity": 1,
+      "value": 1
+    },
+    {
+      "card": [
+        "Search"
+      ],
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Belt Pouch",
+      "rarity": 1,
+      "value": 1
+    },
+    {
+      "card": [
+        "Crush",
+        "Crush",
+        "Crush"
+      ],
+      "image": "Image_Assets\\Card_Example.png",
+      "name": "Warhammer",
+      "rarity": 1,
+      "value": 1
+    }
+  ]
+}

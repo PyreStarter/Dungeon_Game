@@ -70,16 +70,16 @@ def chance_outcome(chance):
         return False
 
 
-def new_player_deck(player, card_index):
+def new_player_deck(player, card_list):
     player.deck = Deck()
-    for i in card_index:
+    for i in card_list:
         if i.name == "Fumble":
             if player.skill < 2:
                 player.deck.add_card(i)
                 if player.skill < 1:
                     player.deck.add_card(i)
                     player.deck.add_card(i)
-    for i in card_index:
+    for i in card_list:
         if i.name == "Quick":
             if player.skill > 2:
                 player.deck.add_card(i)
@@ -87,7 +87,7 @@ def new_player_deck(player, card_index):
                     player.deck.add_card(i)
                     if player.skill > 4:
                         player.deck.add_card(i)
-    for i in card_index:
+    for i in card_list:
         if i.name == "Dodge":
             if player.skill > 1:
                 player.deck.add_card(i)
@@ -95,37 +95,37 @@ def new_player_deck(player, card_index):
                     player.deck.add_card(i)
                     if player.skill > 3:
                         player.deck.add_card(i)
-    for i in card_index:
+    for i in card_list:
         if i.name == "Untouchable":
             if player.skill > 4:
                 player.deck.add_card(i)
-    for i in card_index:
+    for i in card_list:
         if i.name == "Strike":
             if player.power > 0:
                 player.deck.add_card(i)
                 if player.power > 1:
                     player.deck.add_card(i)
                     player.deck.add_card(i)
-    for i in card_index:
+    for i in card_list:
         if i.name == "Great Strength":
             if player.power > 2:
                 player.deck.add_card(i)
                 if player.power > 3:
                     player.deck.add_card(i)
                     player.deck.add_card(i)
-    for i in card_index:
+    for i in card_list:
         if i.name == "Monstrous Strength":
             if player.power > 4:
                 player.deck.add_card(i)
-    for i in card_index:
+    for i in card_list:
         if i.name == "Initiative":
             if player.wit > 3:
                 player.deck.add_card(i)
-    for i in card_index:
+    for i in card_list:
         if i.name == "Caution":
             if player.wit > 3:
                 player.deck.add_card(i)
-    for i in card_index:
+    for i in card_list:
         if i.name == "Quick Thinking":
             if player.wit > 4:
                 player.deck.add_card(i)
@@ -213,7 +213,7 @@ def main():
     card_player = Card_Player()
 
     player_inventory = Inventory()
-    player_hud = Hud(player_inventory, item_database, Environment.ScreenWidth, Environment.ScreenHeight, font)
+    player_hud = Hud(inventory=player_inventory, database=item_database, width=Environment.ScreenWidth, height=Environment.ScreenHeight, font=font)
 
     torch = Torch()
     item_database.add_item(torch)
@@ -221,31 +221,26 @@ def main():
     player_inventory.add_item(torch)
 
 # Card Stuff Card Stuff Card Stuff Card Stuff Card Stuff
+    card_database_json = json.load(open("Image_Assets\\card_database.json"))
+    card_list = []
+    card_item_list = []
 
-    card_list = json.load(open("Image_Assets\\card_list.json"))
-    card_index = []
+    for i in card_database_json['cards']:
+        card_list.append(Card(i['name'], i['type'], i['text'], pygame.image.load(i['image']), font))
 
-    for i in card_list['card']:
-        card_index.append(Card(i['name'], i['type'], i['text'], pygame.image.load(i['image']), font))
 
-    card_item_list = json.load(open("Image_Assets\\card_item_list.json"))
-    card_item_index = []
-
-    for i in card_item_list['item']:
+    for i in card_database_json['items']:
         temp_card_list = []
         for j in i['card']:
-            for k in card_index:
+            for k in card_list:
                 if str(j) == str(k.name):
                     temp_card_list.append(k)
-        card_item_index.append(CardItem(pygame.image.load(i['image']), i['rarity'], i['value'], i['name'], temp_card_list))
+        card_item_list.append(CardItem(pygame.image.load(i['image']), i['rarity'], i['value'], i['name'], temp_card_list))
         del temp_card_list
 
 
 # This is creating a weapon, changing its attributes, giving it a combat option, and equiping it to the character.
-
-    steel_short_sword = Weapon(logo, 10, 2, "Steel Short Sword")
-    steel_short_sword.damage = 3
-    steel_short_sword.accuracy = 65
+    steel_short_sword = Weapon(image=logo, rarity=10, value=2, name="Steel Short Sword", damage=3, accuracy=65)
     sword_attack_option = Option("Sword Attack",
                                  str(str(steel_short_sword.accuracy + player.dexterity*5) +"% chance to deal " + str(steel_short_sword.damage + player.strength) + " damage (attack)"),
                                  steel_short_sword.damage + player.strength,
@@ -256,10 +251,7 @@ def main():
     player_inventory.set_main_hand(steel_short_sword)
 
 # This is creating a shield for the player to use
-
-    round_wooden_shield = Weapon(logo, 4, 1, "Round Wooden Shield")
-    round_wooden_shield.damage = 0
-    round_wooden_shield.accuracy = 20
+    round_wooden_shield = Weapon(image=logo, rarity=4, value=1, name="Round Wooden Shield", damage=0, accuracy=20)
     shield_bash_option = Option("Shield Bash",
                                 str(str(round_wooden_shield.accuracy + player.dexterity*5) +"% chance to deal " + str(round_wooden_shield.damage + player.strength) + " damage (guard)"),
                                 round_wooden_shield.damage + player.strength,
@@ -333,7 +325,7 @@ def main():
                             opening = False
                             inventory = True
                             temp_items = []
-                            for i in card_item_index:
+                            for i in card_item_list:
                                 temp_items.append(i.name)
                             inventory_menu = menu.Menu()
                             inventory_menu.init(temp_items, menu_buffer)
@@ -341,7 +333,7 @@ def main():
                             inventory_menu.x = 0
                             inventory_menu.y = 0
                             inventory_menu.draw()
-                            for i in card_item_index:
+                            for i in card_item_list:
                                 if i.name == inventory_menu.options[inventory_menu.index].text:
                                     for j in range(i.card_list_length):
                                         menu_buffer.blit(i.card_list[j].surface, (
@@ -351,7 +343,7 @@ def main():
                             opening = False
                             menu_buffer.fill((255, 0, 255))
                             t = 0
-                            menu_buffer.blit(card_index[t].surface, (int(Environment.ScreenWidth * .5), 20))
+                            menu_buffer.blit(card_list[t].surface, (int(Environment.ScreenWidth * .5), 20))
                             test_deck = Deck()
                         if opening_menu.get_index() == 0:
                             new_attributes = True
@@ -430,8 +422,8 @@ def main():
                                 tavern = True
                                 menu_buffer.fill((255, 0, 255))
                                 tavern_menu.draw()
-                                new_player_deck(card_player, card_index)
-                                new_player_inventory(card_player, card_item_index)
+                                new_player_deck(card_player, card_list)
+                                new_player_inventory(card_player, card_item_list)
                                 add_inventory_cards(card_player)
                             else:
                                 card_player.power = 0
@@ -464,30 +456,30 @@ def main():
                         menu_buffer.fill((255, 0, 255))
                         opening_menu.draw()
                     if event.key == pygame.K_UP:
-                        if t < len(card_index) - 1:
+                        if t < len(card_list) - 1:
                             t += 1
                         else:
-                            t = 1 - len(card_index)
+                            t = 1 - len(card_list)
                         menu_buffer.blit(decklist_buffer, (0, 0))
-                        menu_buffer.blit(card_index[t].surface,
+                        menu_buffer.blit(card_list[t].surface,
                                          (int(Environment.ScreenWidth * .5), 20))
                     if event.key == pygame.K_DOWN:
-                        if t > (len(card_index)*-1):
+                        if t > (len(card_list)*-1):
                             t -= 1
                         else:
-                            t = len(card_index) - 1
+                            t = len(card_list) - 1
                         menu_buffer.blit(decklist_buffer, (0, 0))
-                        menu_buffer.blit(card_index[t].surface,
+                        menu_buffer.blit(card_list[t].surface,
                                          (int(Environment.ScreenWidth*.5), 20))
                     if event.key == pygame.K_RETURN:
-                        test_deck.add_card(card_index[t])
+                        test_deck.add_card(card_list[t])
                         decklist_buffer.fill((255, 0, 255))
                         for i in range(len(test_deck.get_decklist())):
                             decklist_buffer.blit(font.render(str(test_deck.get_decklist()[i][1]) + "x " +
                                                          test_deck.get_decklist()[i][0], 1, (255, 255, 255),
                                                                      (255, 0, 255)), (0, i * font.get_height()))
                         menu_buffer.blit(decklist_buffer, (0, 0))
-                        menu_buffer.blit(card_index[t].surface,
+                        menu_buffer.blit(card_list[t].surface,
                                          (int(Environment.ScreenWidth * .5), 20))
                     if event.key == pygame.K_h:
                         active_cards = []
@@ -563,7 +555,7 @@ def main():
                             decklist_menu.x = 0
                             decklist_menu.y = 0
                             decklist_menu.draw()
-                            for i in card_index:
+                            for i in card_list:
                                 if i.name == decklist_menu.options[decklist_menu.index].text.split("x ", 1)[1]:
                                     menu_buffer.blit(i.surface, (int(Environment.ScreenWidth * .5), 20))
                         if dungeon_menu.get_index() == 0:
@@ -579,7 +571,7 @@ def main():
                             inventory_menu.x = 0
                             inventory_menu.y = 0
                             inventory_menu.draw()
-                            for i in card_item_index:
+                            for i in card_item_list:
                                 if i.name == inventory_menu.options[inventory_menu.index].text:
                                     for j in range(i.card_list_length):
                                         menu_buffer.blit(i.card_list[j].surface, (
@@ -602,14 +594,14 @@ def main():
                         menu_buffer.fill((0, 0, 0))
                         decklist_menu.select_previous()
                         decklist_menu.draw()
-                        for i in card_index:
+                        for i in card_list:
                             if i.name == decklist_menu.options[decklist_menu.index].text.split("x ", 1)[1]:
                                 menu_buffer.blit(i.surface, (int(Environment.ScreenWidth * .5), 20))
                     if event.key == pygame.K_DOWN:
                         menu_buffer.fill((0, 0, 0))
                         decklist_menu.select_next()
                         decklist_menu.draw()
-                        for i in card_index:
+                        for i in card_list:
                             if i.name == decklist_menu.options[decklist_menu.index].text.split("x ", 1)[1]:
                                 menu_buffer.blit(i.surface, (int(Environment.ScreenWidth * .5), 20))
                     if event.key == pygame.K_h:
@@ -636,7 +628,7 @@ def main():
                         menu_buffer.fill((0, 0, 0))
                         inventory_menu.select_previous()
                         inventory_menu.draw()
-                        for i in card_item_index:
+                        for i in card_item_list:
                             if i.name == inventory_menu.options[inventory_menu.index].text:
                                 for j in range(i.card_list_length):
                                     menu_buffer.blit(i.card_list[j].surface, (int(Environment.ScreenWidth * .15) + j*i.card_list[j].width + 10, 20))
@@ -644,7 +636,7 @@ def main():
                         menu_buffer.fill((0, 0, 0))
                         inventory_menu.select_next()
                         inventory_menu.draw()
-                        for i in card_item_index:
+                        for i in card_item_list:
                             if i.name == inventory_menu.options[inventory_menu.index].text:
                                 for j in range(i.card_list_length):
                                     menu_buffer.blit(i.card_list[j].surface, (int(Environment.ScreenWidth * .15) + j*i.card_list[j].width + 10, 20))
@@ -666,7 +658,7 @@ def main():
                         menu_buffer.fill((0, 0, 0))
                         inventory_menu.select_previous()
                         inventory_menu.draw()
-                        for i in card_item_index:
+                        for i in card_item_list:
                             if i.name == inventory_menu.options[inventory_menu.index].text:
                                 for j in range(i.card_list_length):
                                     menu_buffer.blit(i.card_list[j].surface, (int(Environment.ScreenWidth * .15) + j*i.card_list[j].width + 10, 20))
@@ -674,7 +666,7 @@ def main():
                         menu_buffer.fill((0, 0, 0))
                         inventory_menu.select_next()
                         inventory_menu.draw()
-                        for i in card_item_index:
+                        for i in card_item_list:
                             if i.name == inventory_menu.options[inventory_menu.index].text:
                                 for j in range(i.card_list_length):
                                     menu_buffer.blit(i.card_list[j].surface, (int(Environment.ScreenWidth * .15) + j*i.card_list[j].width + 10, 20))

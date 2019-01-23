@@ -14,11 +14,11 @@ class Item:
 
 # This is the weapon class. It is a subclass of Item. All weapons will be of this class.
 class Weapon(Item):
-    def __init__(self, image, rarity, value, name):
+    def __init__(self, image, rarity, value, name, damage=0, accuracy=0):
         Item.__init__(self, image, rarity, value, name)
         self.options = []
-        self.damage = 0
-        self.accuracy = 0
+        self.damage = damage
+        self.accuracy = accuracy
 
     def add_option(self, option):
         self.options.append(option)
@@ -27,7 +27,7 @@ class Weapon(Item):
 # Torch class
 class Torch(Item):
     def __init__(self):
-        Item.__init__(self, pygame.image.load("Image_Assets\\torch.png"), 1, 5, 'torch')
+        Item.__init__(self, image=pygame.image.load("Image_Assets\\torch.png"), rarity=1, value=5, name='torch')
         self.Hud_Display = True
 
     def use(self, hud, quantity=1):
