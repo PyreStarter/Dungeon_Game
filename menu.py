@@ -30,7 +30,9 @@ class Menu:
 
     def open(self):
         self.active = True
-        self.draw()
+        self.index = 0
+        self.surface.fill((255, 0, 255))
+        self.update_menu_options()
 
     def close(self):
         self.active = False

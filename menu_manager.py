@@ -1,5 +1,7 @@
 from enum import Enum
+from environment import Environment, HUDElements
 from menu import Menu
+from player import CardPlayer
 import pygame
 
 class GameMenu(Enum):
@@ -20,11 +22,11 @@ class MenuManager:
         self.buffer = buffer
         self.menu_list = {}
 
-        self.menu_list[GameMenu.STARTUP] = StartupMenu(['New Game', 'Card Test', 'Inventory Test', 'Quit'], self.buffer)
+        self.menu_list[GameMenu.STARTUP] = StartupMenu(options=['New Game', 'Card Test', 'Inventory Test', 'Quit'], surface=self.buffer)
         self.menu_list[GameMenu.SELECT_ATTRIBUTES] = SelectAttributesMenu(options=['+1 Power', '+1 Skill', '+1 Wit'], surface=self.buffer, player=player)
-        self.menu_list[GameMenu.CONFIRM_ATTRIBUTES] = ConfirmAttributesMenu(['No', 'Yes'], self.buffer)
-        self.menu_list[GameMenu.TAVERN] = TavernMenu(['Enter Dungeon', 'Inventory', 'Save & Quit'], self.buffer)
-        self.menu_list[GameMenu.DUNGEON] = DungeonMenu(['Inventory', 'Decklist', 'Stop', 'Turn Around', 'Save & Quit'], self.buffer)
+        self.menu_list[GameMenu.CONFIRM_ATTRIBUTES] = ConfirmAttributesMenu(options=['No', 'Yes'], surface=self.buffer, player=player)
+        self.menu_list[GameMenu.TAVERN] = TavernMenu(options=['Enter Dungeon', 'Inventory', 'Save & Quit'], surface=self.buffer)
+        self.menu_list[GameMenu.DUNGEON] = DungeonMenu(options=['Inventory', 'Decklist', 'Stop', 'Turn Around', 'Save & Quit'], surface=self.buffer)
 
         self.menu_list[GameMenu.INVENTORY] = Menu(['test', 'test', 'test'], self.buffer)
 
@@ -36,7 +38,7 @@ class MenuManager:
         inventorymenu = False
 
         #self.menu_list[GameMenu.CARD_TEST] = Menu([], self.buffer)
-
+        self.active_menu = GameMenu.NONE
         self.open(GameMenu.STARTUP)
 
     def handle_key(self, key):
@@ -49,8 +51,10 @@ class MenuManager:
             elif key == pygame.K_DOWN or key == pygame.K_RIGHT:
                 menu.next()
             elif key == pygame.K_RETURN:
-                menu.close()
-                self.open(menu.select())
+                next_menu = menu.select()
+                if next_menu != self.active_menu:
+                    menu.close()
+                    self.open(next_menu)
         else:
             if key == pygame.K_ESCAPE:
                 self.open(GameMenu.DUNGEON)
@@ -82,8 +86,8 @@ class StartupMenu(Menu):
 
 class SelectAttributesMenu(Menu):
     def __init__(self, options, surface, player):
-        Menu.__init__(self, options, surface)
         self.player = player
+        Menu.__init__(self, options, surface)
 
     def select(self):
         selected = self.options[self.index].text
@@ -104,17 +108,45 @@ class SelectAttributesMenu(Menu):
             next_menu = GameMenu.CONFIRM_ATTRIBUTES
         return next_menu
 
+    def draw(self):
+        stat_block = pygame.Surface((HUDElements.StatBlockWidth, HUDElements.StatBlockHeight))
+        stat_block.blit(self.font.render("Power: " + str(self.player.power), 1, (255, 255, 255)), (0, 0))
+        stat_block.blit(self.font.render("Skill: " + str(self.player.skill), 1, (255, 255, 255)), (0, self.font.get_height()))
+        stat_block.blit(self.font.render("Wit: " + str(self.player.wit), 1, (255, 255, 255)), (0, 2 * self.font.get_height()))
+        stat_block.blit(self.font.render("Points left: " + str(self.player.points_left), 1, (255, 255, 255)), (0, 3 * self.font.get_height()))
+        self.surface.blit(stat_block, pygame.Rect(HUDElements.StatBlockX, HUDElements.StatBlockY, HUDElements.StatBlockWidth, HUDElements.StatBlockHeight))
+        Menu.draw(self)
+
 class ConfirmAttributesMenu(Menu):
+    def __init__(self, options, surface, player):
+        self.player = player
+        Menu.__init__(self, options, surface)
+
     def select(self):
         selected = self.options[self.index].text
         next_menu = GameMenu.CONFIRM_ATTRIBUTES
         if selected == "No":
             next_menu = GameMenu.SELECT_ATTRIBUTES
+            self.player.skill = 0
+            self.player.power = 0
+            self.player.wit = 0
+            self.player.points_left = 5
         elif selected == "Yes":
             next_menu = GameMenu.TAVERN
         else:
             raise OptionError
         return next_menu
+
+    def draw(self):
+        # TODO(tabitha): de-duplicate code (shared with select attributes menu)
+        stat_block = pygame.Surface((HUDElements.StatBlockWidth, HUDElements.StatBlockHeight))
+        stat_block.blit(self.font.render("Power: " + str(self.player.power), 1, (255, 255, 255)), (0, 0))
+        stat_block.blit(self.font.render("Skill: " + str(self.player.skill), 1, (255, 255, 255)), (0, self.font.get_height()))
+        stat_block.blit(self.font.render("Wit: " + str(self.player.wit), 1, (255, 255, 255)), (0, 2 * self.font.get_height()))
+        stat_block.blit(self.font.render("Points left: " + str(self.player.points_left), 1, (255, 255, 255)), (0, 3 * self.font.get_height()))
+        stat_block.blit(self.font.render("Confirm stat allocation?", 1, (255, 255, 255)), (0, 4 * self.font.get_height()))
+        self.surface.blit(stat_block, pygame.Rect(HUDElements.StatBlockX, HUDElements.StatBlockY, HUDElements.StatBlockWidth, HUDElements.StatBlockHeight))
+        Menu.draw(self)
 
 
 class TavernMenu(Menu):
